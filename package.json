@@ -1,0 +1,35 @@
+{
+  "name": "scholarship-management-firebase",
+  "version": "1.0.0",
+  "description": "Cloud-based Scholarship Management and Monitoring System with Firebase integration",
+  "main": "firebase-sample-data.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "populate": "node firebase-sample-data.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "npx http-server . -p 3000 -c-1",
+    "dev": "npx http-server . -p 3000 -o -c-1",
+    "server": "node server.js"
+  },
+  "dependencies": {
+    "firebase": "^10.7.1"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "keywords": [
+    "firebase",
+    "scholarship",
+    "management",
+    "firestore",
+    "sample-data",
+    "education"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/potatobutfried/Cloud-base-Scholarship-Management-and-Monitoring-System.git"
+  }
+}

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRC-MLALAF Scholarship | Motortrade Life and Livelihood Assistance Foundation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        /* Header & Navigation */
+        .header {
+            background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #FFD700;
+        }
+        
+        .login-btn {
+            background: white;
+            color: #4A90E2;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .login-btn:hover {
+            background: #FFD700;
+            color: #333;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);
+            color: white;
+            padding: 8rem 0 4rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: white;
+            transform: skewY(-2deg);
+            transform-origin: bottom left;
+        }
+        
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .hero-content h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #FFD700;
+        }
+        
+        .hero-content p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        
+        .apply-btn {
+            background: #FFD700;
+            color: #333;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        
+        .apply-btn:hover {
+            background: #FFC107;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .hero-logo {
+            text-align: center;
+        }
+        
+        .motortrade-logo {
+            width: 400px;
+            height: 400px;
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        .motortrade-logo svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* About Section */
+        .about {
+            padding: 5rem 0;
+            background: #f8f9fa;
+        }
+        
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+        
+        .about h2 {
+            color: #4A90E2;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 3rem;
+            text-align: left;
+        }
+        
+        .about-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #555;
+        }
+        
+        .about-text p {
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Contact Section */
+        .contact {
+            background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);
+            color: white;
+            padding: 4rem 0;
+        }
+        
+        .contact-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .contact h2 {
+            color: #FFD700;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .contact p {
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+        
+        .contact-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .contact-card {
+            background: white;
+            color: #333;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .contact-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            background: #4A90E2;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .contact-card h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        .contact-card p {
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .direct-link-btn {
+            background: #FFD700;
+            color: #333;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        
+        .direct-link-btn:hover {
+            background: #FFC107;
+            transform: translateY(-2px);
+        }
+        
+        /* What's New Section */
+        .whats-new {
+            padding: 5rem 0;
+            background: white;
+        }
+        
+        .whats-new-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .whats-new h2 {
+            color: #4A90E2;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .scholarship-info {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 3rem;
+            align-items: start;
+        }
+        
+        .scholarship-content h3 {
+            color: #4A90E2;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .requirements, .qualifications, .instructions {
+            margin-bottom: 2rem;
+        }
+        
+        .requirements h4, .qualifications h4, .instructions h4 {
+            color: #4A90E2;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        
+        .requirements ul, .qualifications ul, .instructions ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .requirements li, .qualifications li, .instructions li {
+            padding: 0.3rem 0;
+            position: relative;
+            padding-left: 1.5rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .requirements li:before, .qualifications li:before {
+            content: "•";
+            color: #4A90E2;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        
+        .instructions li:before {
+            content: "•";
+            color: #4A90E2;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        
+        .renewal-section {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+        
+        .renewal-section h3 {
+            color: #4A90E2;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .apply-now-btn, .renew-now-btn {
+            background: #FFD700;
+            color: #333;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+            flex: 1;
+            transition: all 0.3s;
+        }
+        
+        .apply-now-btn:hover, .renew-now-btn:hover {
+            background: #FFC107;
+            transform: translateY(-2px);
+        }
+        
+        .scholarship-image {
+            background: #f0f0f0;
+            border-radius: 15px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 1.1rem;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .footer-links a:hover {
+            color: #4A90E2;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-content h1 {
+                font-size: 1.5rem;
+            }
+            
+            .hero-content h2 {
+                font-size: 2rem;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .scholarship-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">GRC-MLALAF Scholarship</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#contact">Contact Us</a></li>
+                <li><a href="#whats-new">What's New?</a></li>
+            </ul>
+            <a href="login.html" class="login-btn">Login</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1>GOOD AFTERNOON!</h1>
+                <h2>Welcome to<br>GRC-MLALAF Scholarship</h2>
+                <p>It breaks barriers, opens doors, and reaches those once left behind. This is education without borders where learning adapts, empowers, and transforms lives.</p>
+                <a href="apply.html" class="apply-btn">Apply Now!</a>
+            </div>
+            <div class="hero-logo">
+                <div class="motortrade-logo">
+                    <svg viewBox="0 0 400 400" style="transform: rotate(-15deg);">
+                        <circle cx="200" cy="200" r="180" fill="none" stroke="#FFD700" stroke-width="4"/>
+                        <text x="200" y="140" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#FFD700">Life & livelihood</text>
+                        <text x="200" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#FFD700">Motortrade</text>
+                        <text x="200" y="240" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#FFD700">assistance</text>
+                        <text x="200" y="270" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#FFD700">foundation</text>
+                        <path d="M 60 320 Q 200 280 340 320" stroke="#FFD700" stroke-width="2" fill="none"/>
+                        <path d="M 60 80 Q 200 120 340 80" stroke="#FFD700" stroke-width="2" fill="none"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="about-container">
+            <h2>About Us</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>The Motortrade Life and Livelihood Assistance Foundation, Inc. (MLALAF) was registered with Securities and Exchange Commission (SEC) as a non-stock, non-profit organization on April 26, 2001 by a group of incorporators who are interested in the improvement of the quality of life and the social and spiritual values of the urban poor. It is a family foundation. Its main office is located at TPI Bldg., EDSA corner Harvard St., Brgy Pinagkaisahan, Makati City.</p>
+                </div>
+                <div class="about-text">
+                    <p>Global Reciprocal Colleges (GRC) is a private college located on 9th Avenue, Caloocan City, Metro Manila, Philippines. It was founded in 2008 by Vicente N. Ongtenco, a businessman whose family also owns Motortrade, a well-known motorcycle company in the Philippines. Ongtenco is also the chairman of the college, and he is assisted by his children in managing it. He established the school to help underprivileged students gain access to higher education by providing scholarships and financial assistance to deserving students. As of 2017, the college had between 3,500 to 4,000 students, with around 30% of them being scholars.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="contact-container">
+            <h2>Get in Touch</h2>
+            <p>For more information or inquiries, please don't hesitate to contact us.</p>
+            <div class="contact-cards">
+                <div class="contact-card">
+                    <div class="contact-icon">📘</div>
+                    <h3>Contact us on facebook</h3>
+                    <p>https://www.facebook.com/GrcScholarshipOfficial</p>
+                    <a href="https://www.facebook.com/GrcScholarshipOfficial" class="direct-link-btn">Direct Link</a>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">📍</div>
+                    <h3>Location</h3>
+                    <p>454 GRC BLDG. Rizal Ave. Cor. 9th ave. East Grace Park, Caloocan City 1400 Metro Manila.</p>
+                    <a href="#" class="direct-link-btn">Direct Link</a>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">✉️</div>
+                    <h3>Email us in</h3>
+                    <p>scholarship@grc.edu.ph</p>
+                    <a href="mailto:scholarship@grc.edu.ph" class="direct-link-btn">Direct Link</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What's New Section -->
+    <section class="whats-new" id="whats-new">
+        <div class="whats-new-container">
+            <h2>What's New?</h2>
+            <div class="scholarship-info">
+                <div class="scholarship-content">
+                    <h3>We Offer 100% Scholarship!</h3>
+                    
+                    <div class="requirements">
+                        <h4>Requirements</h4>
+                        <ul>
+                            <li>Current grades;</li>
+                            <li>Form 138 (if freshman);</li>
+                            <li>T.O.R. (if transferee);</li>
+                            <li>Latest grade slip (if GRC student already)</li>
+                            <li>Current Certificate of Matriculation (if GRC student already);</li>
+                            <li>GRC Admission slip or proof of successful compliance with all the GRC Admission requirements (if freshman or transferred-in);</li>
+                            <li>Two (2) Recommendation Letter (from two (2) of any of the ff: Teacher, principal, guidance counselor, pastor, and/or public official);</li>
+                            <li>Testimony & 500 word essay of the applicant's life: story, family situation, and his/her reasons why he/she should be granted a scholarship.)</li>
+                            <li>House Photos (must be 1 page only) — Photos of applicant's house, which should cover the ff:</li>
+                            <li>i. Outside: Front, Back, Sides (Left and Right)</li>
+                            <li>ii. Inside: Living Area, Dining, Kitchen, CR and Bedroom/s; and</li>
+                            <li>iii. If it is possible, include the photos of the houses in the surrounding area.</li>
+                        </ul>
+                    </div>
+
+                    <div class="qualifications">
+                        <h4>Qualifications</h4>
+                        <ul>
+                            <li>Shall be a Filipino citizen;</li>
+                            <li>Senior High School graduate,</li>
+                            <li>transferred-in student, or currently enrolled in GRC;</li>
+                            <li>have successfully passed the entrance examinations of GRC;</li>
+                            <li>an indigent,</li>
+                            <li>family's total annual gross income shall not be exceeding to One Hundred Fifty-Six Thousand Pesos (156,000.00Php); shall not presently be availing any scholarship or student grant from CHED, any government offices, NGOs, politicians, or another institution;</li>
+                            <li>shall have no INC., F.A. 5.00, or any grade remarks equivalent to these on the recent grade report, and</li>
+                            <li>a freshman or sophomore college student in GRC.</li>
+                        </ul>
+                    </div>
+
+                    <div class="instructions">
+                        <h4>Instructions</h4>
+                        <ul>
+                            <li>Check the "100% Sponsored Scholarship" category</li>
+                            <li>Fill out the application form</li>
+                            <li>after successful validation, kindly pass hardcopy documents to the scholarship office</li>
+                            <li>For inquiries and concerns, please message us on Facebook or email us at scholarship@grc.edu.ph</li>
+                        </ul>
+                    </div>
+
+                    <div class="renewal-section">
+                        <h3>FOR RENEWAL</h3>
+                        
+                        <div class="requirements">
+                            <h4>Requirements</h4>
+                            <ul>
+                                <li>Certificate of Completion</li>
+                                <li>Certificate of Registration</li>
+                                <li>Gradeslip</li>
+                            </ul>
+                        </div>
+
+                        <div class="qualifications">
+                            <h4>Qualifications</h4>
+                            <ul>
+                                <li>Shall be a previous scholar</li>
+                                <li>Shall have no INC.,F.A. 5.00 or any grade remarks equivalent to the recent grade report.</li>
+                            </ul>
+                        </div>
+
+                        <div class="instructions">
+                            <h4>Instructions</h4>
+                            <ul>
+                                <li>after successful validation, kindly pass hardcopy documents to the scholarship office</li>
+                                <li>For inquiries and concerns, please message us on Facebook or email us at scholarship@grc.edu.ph</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <a href="apply.html" class="apply-now-btn">Apply Now!</a>
+                        <a href="#renew" class="renew-now-btn">Renew Now!</a>
+                    </div>
+                </div>
+                
+                <div class="scholarship-image">
+                    <p>Scholarship Program Image</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-links">
+                <span>Follow Us</span>
+                <a href="#">📘</a>
+                <a href="#">✉️</a>
+            </div>
+            <p><a href="#">Terms of Service</a> | <a href="#">Privacy Policy</a> | <a href="#">Accessibility Policy</a></p>
+        </div>
+    </footer>
+</body>
+</html>

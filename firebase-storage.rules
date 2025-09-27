@@ -1,0 +1,50 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Authenticated user application documents
+    match /scholarship_applications/{userId}/{applicationId}/{fileName} {
+      // Users can upload to their own application folders (max 10MB per file)
+      allow write: if request.auth != null && 
+                      request.auth.uid == userId &&
+                      resource == null && // Only allow new files, not updates
+                      request.resource.size <= 10 * 1024 * 1024; // 10MB limit
+      
+      // Users can read their own documents
+      allow read: if request.auth != null && request.auth.uid == userId;
+      
+      // Admins and reviewers can read all application documents
+      allow read: if request.auth != null && 
+                     exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
+                     get(/databases/(default)/documents/users/$(request.auth.uid)).data.role in ['administrator', 'reviewer'];
+    }
+    
+    // Guest application documents
+    match /scholarship_applications/guest/{applicationId}/{fileName} {
+      // Allow guest uploads (no authentication required, max 10MB per file)
+      allow write: if resource == null && // Only allow new files, not updates
+                      request.resource.size <= 10 * 1024 * 1024; // 10MB limit
+      
+      // Admins and reviewers can read guest application documents
+      allow read: if request.auth != null && 
+                     exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
+                     get(/databases/(default)/documents/users/$(request.auth.uid)).data.role in ['administrator', 'reviewer'];
+    }
+    
+    // Anonymous uploads (fallback for guest submissions)
+    match /scholarship_applications/anonymous/{applicationId}/{fileName} {
+      // Allow anonymous uploads (max 10MB per file)
+      allow write: if resource == null && 
+                      request.resource.size <= 10 * 1024 * 1024;
+      
+      // Admins can read anonymous uploads
+      allow read: if request.auth != null && 
+                     exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
+                     get(/databases/(default)/documents/users/$(request.auth.uid)).data.role in ['administrator', 'reviewer'];
+    }
+    
+    // Default deny all other files
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

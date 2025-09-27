@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scholarship Application | GRC-MLALAF Scholarship</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f7fa;
+        }
+        
+        /* Header & Navigation */
+        .header {
+            background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #FFD700;
+        }
+        
+        .login-btn {
+            background: white;
+            color: #4A90E2;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .login-btn:hover {
+            background: #FFD700;
+            color: #333;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 900px;
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #4A90E2;
+        }
+        
+        .form-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .required::after {
+            content: '*';
+            color: #e74c3c;
+            margin-left: 4px;
+        }
+        
+        input[type="text"], 
+        input[type="email"], 
+        select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: #f9f9f9;
+        }
+        
+        input[type="text"]:focus, 
+        input[type="email"]:focus, 
+        select:focus {
+            outline: none;
+            border-color: #4A90E2;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+        
+        input[type="file"] {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #f9f9f9;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        input[type="file"]:hover {
+            border-color: #4A90E2;
+            background: white;
+        }
+        
+        .file-group {
+            display: none;
+            background: #f8f9ff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 4px solid #4A90E2;
+        }
+        
+        .file-group.active {
+            display: block;
+        }
+        
+        .file-section-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #4A90E2;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 2rem;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(74, 144, 226, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status-message {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .status-message.success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+        
+        .status-message.error {
+            background: #ffe6e6;
+            color: #d32f2f;
+            border-left: 4px solid #d32f2f;
+        }
+        
+        .divider {
+            margin: 2rem 0;
+            border: none;
+            height: 2px;
+            background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);
+            border-radius: 1px;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #4A90E2;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: color 0.3s;
+        }
+        
+        .back-link:hover {
+            color: #357abd;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 5px;
+        }
+        
+        .info-box h3 {
+            color: #1976d2;
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-box p {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .container {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">GRC-MLALAF Scholarship</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#about">About Us</a></li>
+                <li><a href="index.html#contact">Contact Us</a></li>
+                <li><a href="index.html#whats-new">What's New?</a></li>
+            </ul>
+            <a href="login.html" class="login-btn">Login</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <a href="index.html" class="back-link">
+                ← Back to Home
+            </a>
+            
+            <div class="form-header">
+                <h1>Scholarship Application</h1>
+                <p>Complete your application for the GRC-MLALAF Scholarship Program</p>
+            </div>
+
+            <div class="info-box">
+                <h3>📋 Application Requirements</h3>
+                <p>Please ensure you have all required documents ready in <strong>PDF, DOC, DOCX, JPG, JPEG, or PNG</strong> format. The required documents will vary based on your applicant type (Freshman, Transferee, or Old Student in GRC). Maximum file size: 10MB per file.</p>
+            </div>
+
+            <form id="applicationForm">
+                <!-- Personal Information -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="surname" class="required">Surname</label>
+                        <input type="text" id="surname" name="surname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstname" class="required">First Name</label>
+                        <input type="text" id="firstname" name="firstname" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="required">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <!-- Academic Information -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="applicant_type" class="required">Applicant Type</label>
+                        <select id="applicant_type" name="applicant_type" required>
+                            <option value="">Select an option</option>
+                            <option value="freshman">Freshman</option>
+                            <option value="transferee">Transferee</option>
+                            <option value="old student in GRC">Old Student in GRC</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="yearLevel" class="required">Year Level</label>
+                        <select id="yearLevel" name="yearLevel" required>
+                            <option value="">Select Year Level</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="course" class="required">Course</label>
+                    <select id="course" name="course" required>
+                        <option value="">Select Course</option>
+                        <option value="BSIT">Bachelor of Science in Information Technology (BSIT)</option>
+                        <option value="BSED">Bachelor of Science in Education (BSED)</option>
+                        <option value="BSBA">Bachelor of Science in Business Administration (BSBA)</option>
+                        <option value="BSA">Bachelor of Science in Accountancy (BSA)</option>
+                        <option value="BSE">Bachelor of Science in Engineering (BSE)</option>
+                    </select>
+                </div>
+
+                <hr class="divider">
+
+                <!-- Conditional File Uploads -->
+                <div id="fileUploads">
+                    <!-- Freshman Files -->
+                    <div id="freshman-files" class="file-group">
+                        <div class="file-section-title">📄 Freshman Requirements</div>
+                        <div class="form-group">
+                            <label for="formOne" class="required">Form 137/138 (or equivalent)</label>
+                            <input type="file" id="formOne" name="formOne" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                            <small style="color: #666; font-size: 0.9rem;">Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="admSlip" class="required">Admission Slip</label>
+                            <input type="file" id="admSlip" name="admSlip" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                            <small style="color: #666; font-size: 0.9rem;">Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG</small>
+                        </div>
+                    </div>
+
+                    <!-- Transferee Files -->
+                    <div id="transferee-files" class="file-group">
+                        <div class="file-section-title">📄 Transferee Requirements</div>
+                        <div class="form-group">
+                            <label for="tor" class="required">Transcript of Records (TOR)</label>
+                            <input type="file" id="tor" name="tor" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                            <small style="color: #666; font-size: 0.9rem;">Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="admSlip-transferee" class="required">Admission Slip</label>
+                            <input type="file" id="admSlip-transferee" name="admSlip" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                            <small style="color: #666; font-size: 0.9rem;">Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG</small>
+                        </div>
+                    </div>
+
+                    <!-- Old Student Files -->
+                    <div id="old-student-files" class="file-group">
+                        <div class="file-section-title">📄 Old Student Requirements</div>
+                        <div class="form-group">
+                            <label for="lGradeslip" class="required">Latest Gradeslip</label>
+                            <input type="file" id="lGradeslip" name="lGradeslip" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                            <small style="color: #666; font-size: 0.9rem;">Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="cor" class="required">Certificate of Registration (COR)</label>
+                            <input type="file" id="cor" name="cor" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                            <small style="color: #666; font-size: 0.9rem;">Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG</small>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="divider">
+
+                <!-- Common Required Documents -->
+                <div class="file-section-title">📋 Required Documents (All Applicants)</div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="recLet1" class="required">Recommendation Letter 1</label>
+                        <input type="file" id="recLet1" name="recLet1" required accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                        <small style="color: #666; font-size: 0.9rem;">Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="valid1" class="required">Valid ID (Recommender 1)</label>
+                        <input type="file" id="valid1" name="valid1" required accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                        <small style="color: #666; font-size: 0.9rem;">Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG</small>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="recLet2" class="required">Recommendation Letter 2</label>
+                        <input type="file" id="recLet2" name="recLet2" required accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                        <small style="color: #666; font-size: 0.9rem;">Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="valid2" class="required">Valid ID (Recommender 2)</label>
+                        <input type="file" id="valid2" name="valid2" required accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                        <small style="color: #666; font-size: 0.9rem;">Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="testimony" class="required">Testimony & 500-word Essay</label>
+                    <input type="file" id="testimony" name="testimony" required accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                    <small style="color: #666; font-size: 0.9rem;">Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="housePhotos" class="required">House Photos (1 page compilation)</label>
+                    <input type="file" id="housePhotos" name="housePhotos" required accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                    <small style="color: #666; font-size: 0.9rem;">Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="certIndigence" class="required">Certificate of Indigence</label>
+                    <input type="file" id="certIndigence" name="certIndigence" required accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                    <small style="color: #666; font-size: 0.9rem;">Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG</small>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Submit Application
+                </button>
+
+                <div id="statusMessage" class="status-message"></div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase modules (for Firestore only)
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, addDoc, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        
+        // Import Google Drive service
+        import { GoogleDriveService } from './google-drive-config.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "316123000523",
+            appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+            measurementId: "G-QW1PMQZMSZ"
+        };
+
+        // Initialize Firebase (Firestore only)
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        // Initialize Google Drive service
+        const driveService = new GoogleDriveService();
+        let driveInitialized = false;
+        
+        console.log('Firebase initialized successfully');
+
+        // DOM Elements
+        const form = document.getElementById('applicationForm');
+        const applicantTypeSelect = document.getElementById('applicant_type');
+        const freshmanFiles = document.getElementById('freshman-files');
+        const transfereeFiles = document.getElementById('transferee-files');
+        const oldStudentFiles = document.getElementById('old-student-files');
+        const statusMessage = document.getElementById('statusMessage');
+        const submitBtn = document.getElementById('submitBtn');
+
+        let currentUser = null;
+
+        // Utility functions
+        function showStatus(message, isSuccess) {
+            statusMessage.textContent = message;
+            statusMessage.style.display = 'block';
+            statusMessage.className = `status-message ${isSuccess ? 'success' : 'error'}`;
+            statusMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function setLoading(isLoading) {
+            if (isLoading) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading"></span> Submitting Application...';
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Application';
+            }
+        }
+
+        // Function to clear all conditional fields
+        function clearConditionalFields() {
+            [freshmanFiles, transfereeFiles, oldStudentFiles].forEach(group => {
+                group.classList.remove('active');
+                group.querySelectorAll('input').forEach(input => {
+                    input.required = false;
+                    input.value = '';
+                });
+            });
+        }
+
+        // Event listener for applicant type change
+        applicantTypeSelect.addEventListener('change', (event) => {
+            clearConditionalFields();
+            const selectedType = event.target.value;
+
+            if (selectedType === 'freshman') {
+                freshmanFiles.classList.add('active');
+                document.getElementById('formOne').required = true;
+                document.getElementById('admSlip').required = true;
+            } else if (selectedType === 'transferee') {
+                transfereeFiles.classList.add('active');
+                document.getElementById('tor').required = true;
+                document.getElementById('admSlip-transferee').required = true;
+            } else if (selectedType === 'old student in GRC') {
+                oldStudentFiles.classList.add('active');
+                document.getElementById('lGradeslip').required = true;
+                document.getElementById('cor').required = true;
+            }
+        });
+
+        // Initialize Google Drive with timeout
+        async function initializeDrive() {
+            if (!driveInitialized) {
+                try {
+                    console.log('🔄 Initializing Google Drive API...');
+                    
+                    // Create a timeout promise
+                    const timeoutPromise = new Promise((_, reject) => {
+                        setTimeout(() => reject(new Error('Initialization timeout')), 10000); // 10 second timeout
+                    });
+                    
+                    // Race between initialization and timeout
+                    await Promise.race([
+                        driveService.initialize(),
+                        timeoutPromise
+                    ]);
+                    
+                    driveInitialized = true;
+                    console.log('✅ Google Drive API initialized successfully');
+                    return true;
+                } catch (error) {
+                    console.warn('⚠️ Google Drive initialization failed:', error.message);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Function to upload file to Google Drive with robust error handling
+        async function uploadFile(file, fileName, applicationId, isGuest = false) {
+            if (!file) return null;
+            
+            console.log(`📤 Starting upload: ${fileName} (${(file.size / 1024).toFixed(1)}KB)`);
+            
+            try {
+                // Try to initialize Google Drive if not already done
+                const driveReady = await initializeDrive();
+                
+                if (driveReady && driveInitialized) {
+                    // Try Google Drive upload
+                    console.log('🔄 Uploading to Google Drive...');
+                    const fileInfo = await driveService.uploadFile(file, fileName, applicationId, isGuest);
+                    console.log('✅ Google Drive upload successful');
+                    
+                    return {
+                        fileId: fileInfo.fileId,
+                        fileName: fileInfo.fileName,
+                        viewUrl: fileInfo.viewUrl,
+                        downloadUrl: fileInfo.downloadUrl,
+                        originalName: fileInfo.originalName,
+                        uploadedAt: fileInfo.uploadedAt,
+                        size: fileInfo.size,
+                        type: fileInfo.type,
+                        storage: 'google-drive'
+                    };
+                }
+            } catch (error) {
+                console.warn('⚠️ Google Drive upload failed:', error.message);
+            }
+            
+            // Fallback: Convert to base64 and store in Firestore
+            console.log('🔄 Using fallback storage (base64)...');
+            try {
+                const base64Data = await fileToBase64(file);
+                console.log('✅ Fallback storage successful');
+                
+                return {
+                    fileName: fileName,
+                    originalName: file.name,
+                    base64Data: base64Data,
+                    uploadedAt: new Date().toISOString(),
+                    size: file.size,
+                    type: file.type,
+                    storage: 'base64-fallback'
+                };
+            } catch (fallbackError) {
+                console.error('❌ All upload methods failed:', fallbackError);
+                throw new Error(`File upload failed: ${fallbackError.message}`);
+            }
+        }
+        
+        // Helper function to convert file to base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // File validation function
+        function validateFile(file) {
+            const allowedTypes = [
+                'application/pdf',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'image/jpeg',
+                'image/jpg', 
+                'image/png'
+            ];
+            
+            const allowedExtensions = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            
+            // Check file size
+            if (file.size > maxSize) {
+                return {
+                    valid: false,
+                    error: `File "${file.name}" is too large. Maximum size is 10MB.`
+                };
+            }
+            
+            // Check file type by MIME type
+            if (!allowedTypes.includes(file.type)) {
+                // Also check by file extension as backup
+                const fileName = file.name.toLowerCase();
+                const hasValidExtension = allowedExtensions.some(ext => fileName.endsWith(ext));
+                
+                if (!hasValidExtension) {
+                    return {
+                        valid: false,
+                        error: `File "${file.name}" has an invalid format. Please use: PDF, DOC, DOCX, JPG, JPEG, or PNG.`
+                    };
+                }
+            }
+            
+            return { valid: true };
+        }
+
+        // Handle form submission
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            // Validate all uploaded files
+            const fileInputs = form.querySelectorAll('input[type="file"]');
+            for (const input of fileInputs) {
+                if (input.files.length > 0) {
+                    const validation = validateFile(input.files[0]);
+                    if (!validation.valid) {
+                        showStatus(validation.error, false);
+                        return;
+                    }
+                }
+            }
+
+            // Client-side validation for the conditional files
+            const selectedType = applicantTypeSelect.value;
+            let missingConditionalFiles = false;
+
+            if (selectedType === 'freshman') {
+                if (!document.getElementById('formOne').files.length || !document.getElementById('admSlip').files.length) {
+                    missingConditionalFiles = true;
+                }
+            } else if (selectedType === 'transferee') {
+                if (!document.getElementById('tor').files.length || !document.getElementById('admSlip-transferee').files.length) {
+                    missingConditionalFiles = true;
+                }
+            } else if (selectedType === 'old student in GRC') {
+                if (!document.getElementById('lGradeslip').files.length || !document.getElementById('cor').files.length) {
+                    missingConditionalFiles = true;
+                }
+            }
+
+            if (missingConditionalFiles) {
+                showStatus('Please upload all required documents for your selected applicant type.', false);
+                return;
+            }
+
+            setLoading(true);
+            
+            try {
+                const applicationId = `APP-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+                const guestId = `guest_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
+                const uploadPromises = [];
+                const fileUrls = {};
+
+                showStatus('Uploading documents... Please wait.', true);
+
+                // Collect all file inputs
+                const fileInputs = form.querySelectorAll('input[type="file"]');
+                let uploadedCount = 0;
+                const totalFiles = Array.from(fileInputs).filter(input => input.files.length > 0).length;
+                
+                for (const input of fileInputs) {
+                    if (input.files.length > 0) {
+                        const file = input.files[0];
+                        const fileName = `${input.name}_${Date.now()}_${file.name}`;
+                        const isGuest = !currentUser; // Determine if this is a guest submission
+                        
+                        uploadPromises.push(
+                            uploadFile(file, fileName, applicationId, isGuest).then(fileInfo => {
+                                if (fileInfo.storage === 'google-drive') {
+                                    fileUrls[input.name] = {
+                                        fileId: fileInfo.fileId,
+                                        fileName: fileInfo.fileName,
+                                        viewUrl: fileInfo.viewUrl,
+                                        downloadUrl: fileInfo.downloadUrl,
+                                        originalName: fileInfo.originalName,
+                                        uploadedAt: fileInfo.uploadedAt,
+                                        size: fileInfo.size,
+                                        type: fileInfo.type,
+                                        storage: 'google-drive'
+                                    };
+                                } else {
+                                    // Fallback storage
+                                    fileUrls[input.name] = {
+                                        fileName: fileInfo.fileName,
+                                        originalName: fileInfo.originalName,
+                                        base64Data: fileInfo.base64Data,
+                                        uploadedAt: fileInfo.uploadedAt,
+                                        size: fileInfo.size,
+                                        type: fileInfo.type,
+                                        storage: fileInfo.storage
+                                    };
+                                }
+                                uploadedCount++;
+                                const storageType = fileInfo.storage === 'google-drive' ? 'Google Drive' : 'backup storage';
+                                showStatus(`📤 Uploading to ${storageType}... (${uploadedCount}/${totalFiles})`, true);
+                            })
+                        );
+                    }
+                }
+
+                // Wait for all file uploads to complete
+                await Promise.all(uploadPromises);
+                showStatus('Processing application...', true);
+
+                // Prepare comprehensive application data for guest submission
+                const applicationData = {
+                    applicationId,
+                    userId: currentUser ? currentUser.uid : null,
+                    guestId: currentUser ? null : guestId,
+                    submissionType: currentUser ? 'authenticated' : 'guest',
+                    applicantInfo: {
+                        surname: form.surname.value.trim(),
+                        firstname: form.firstname.value.trim(),
+                        fullName: `${form.firstname.value.trim()} ${form.surname.value.trim()}`,
+                        email: form.email.value.trim(),
+                        applicantType: form.applicant_type.value,
+                        yearLevel: parseInt(form.yearLevel.value),
+                        course: form.course.value
+                    },
+                    documents: fileUrls,
+                    applicationStatus: {
+                        status: 'Pending',
+                        statusHistory: [
+                            {
+                                status: 'Pending',
+                                timestamp: new Date(),
+                                updatedBy: 'system',
+                                notes: 'Application submitted'
+                            }
+                        ],
+                        reviewedBy: null,
+                        reviewedAt: null,
+                        reviewNotes: null
+                    },
+                    metadata: {
+                        submittedAt: new Date(),
+                        updatedAt: new Date(),
+                        ipAddress: null, // Could be added with additional setup
+                        browserInfo: navigator.userAgent,
+                        applicationVersion: '1.0'
+                    }
+                };
+
+                // Submit to Firestore
+                console.log('Submitting application to Firestore...');
+                const docRef = await addDoc(collection(db, 'scholarship_applications'), applicationData);
+                console.log('Application submitted with document ID:', docRef.id);
+                
+                showStatus(`🎉 Application submitted successfully! 
+                          Your application ID is: ${applicationId}
+                          Document ID: ${docRef.id}
+                          Please save this information for your records.`, true);
+                
+                // Reset form
+                form.reset();
+                clearConditionalFields();
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+            } catch (error) {
+                console.error('Error submitting application:', error);
+                
+                let errorMessage = 'An error occurred while submitting your application.';
+                if (error.code === 'permission-denied') {
+                    errorMessage = 'Permission denied. Please check your account status or contact support.';
+                } else if (error.code === 'storage/unauthorized') {
+                    errorMessage = 'File upload failed due to security settings. Please contact support.';
+                } else if (error.message) {
+                    errorMessage += ' Error: ' + error.message;
+                }
+                
+                showStatus(errorMessage, false);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Auth state observer - optional login
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            if (user) {
+                // Pre-fill form data if user is logged in
+                try {
+                    const userDocRef = doc(db, 'users', user.uid);
+                    const userDoc = await getDoc(userDocRef);
+                    
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        if (userData.firstName && !document.getElementById('firstname').value) {
+                            document.getElementById('firstname').value = userData.firstName;
+                        }
+                        if (userData.lastName && !document.getElementById('surname').value) {
+                            document.getElementById('surname').value = userData.lastName;
+                        }
+                    }
+                    if (!document.getElementById('email').value) {
+                        document.getElementById('email').value = user.email;
+                    }
+                } catch (error) {
+                    console.error('Error loading user data:', error);
+                }
+            }
+            // Note: Form is accessible to both logged-in and guest users
+        });
+        
+        // Initialize system when page loads
+        document.addEventListener('DOMContentLoaded', async () => {
+            showStatus('🔄 Initializing file upload system...', true);
+            
+            // Start Google Drive initialization in background (don't wait for it)
+            initializeDrive().then(success => {
+                if (success) {
+                    console.log('✅ Google Drive ready for uploads');
+                    showStatus('✅ Ready! Files will be stored in Google Drive.', true);
+                } else {
+                    console.log('⚠️ Using backup storage');
+                    showStatus('✅ Ready! Using backup file storage.', true);
+                }
+                setTimeout(() => {
+                    const statusEl = document.getElementById('statusMessage');
+                    if (statusEl) statusEl.style.display = 'none';
+                }, 3000);
+            }).catch(() => {
+                console.log('⚠️ Google Drive initialization failed, using backup');
+                showStatus('✅ Ready! Using backup file storage.', true);
+                setTimeout(() => {
+                    const statusEl = document.getElementById('statusMessage');
+                    if (statusEl) statusEl.style.display = 'none';
+                }, 3000);
+            });
+            
+            // Show initial ready message immediately
+            setTimeout(() => {
+                showStatus('✅ System ready! Preparing file upload...', true);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

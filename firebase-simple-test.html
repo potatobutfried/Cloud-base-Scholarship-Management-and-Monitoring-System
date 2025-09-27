@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Simple Test - No Auth Required</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .primary-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .primary-btn:hover {
+            background-color: #45a049;
+        }
+        .secondary-btn {
+            background-color: #008CBA;
+            color: white;
+        }
+        .secondary-btn:hover {
+            background-color: #007B9A;
+        }
+        .info-btn {
+            background-color: #f44336;
+            color: white;
+        }
+        .info-btn:hover {
+            background-color: #da190b;
+        }
+        #output {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .loading {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .rules-section {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        pre {
+            background-color: #343a40;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎓 Firebase Simple Test (No Auth)</h1>
+        <p>Scholarship Management System - Testing Without Authentication</p>
+    </div>
+
+    <div class="warning">
+        <h3>⚠️ IMPORTANT: Update Firestore Rules First!</h3>
+        <p>Before using this tool, you MUST update your Firestore security rules to allow writes without authentication.</p>
+    </div>
+
+    <div class="rules-section">
+        <h3>📝 Required Firestore Security Rules</h3>
+        <p>Go to Firebase Console → Firestore Database → Rules, and replace with:</p>
+        <pre>rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}</pre>
+        <p><strong>Note:</strong> This rule allows anyone to read/write your database. Only use for development/testing!</p>
+    </div>
+
+    <div class="button-container">
+        <button id="populateAllBtn" class="primary-btn">🚀 Populate All Collections</button>
+        <button id="addApplicationsBtn" class="secondary-btn">📝 Add Applications (10)</button>
+        <button id="addProgramsBtn" class="secondary-btn">🏆 Add Programs (5)</button>
+        <button id="addUsersBtn" class="secondary-btn">👥 Add Users (3)</button>
+        <button id="readDataBtn" class="info-btn">📖 Read Data</button>
+        <button id="clearLogBtn" class="info-btn">🗑️ Clear Log</button>
+    </div>
+
+    <div id="status"></div>
+    <div id="output"></div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase modules (NO AUTH)
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "316123000523",
+            appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+            measurementId: "G-QW1PMQZMSZ"
+        };
+
+        // Initialize Firebase (NO AUTH)
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Get DOM elements
+        const output = document.getElementById('output');
+        const status = document.getElementById('status');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            output.innerHTML += `[${timestamp}] ${message}\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function showStatus(message, type = 'loading') {
+            status.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        // Sample data arrays
+        const firstNames = ["John", "Jane", "Michael", "Sarah", "David", "Emily", "Robert", "Lisa", "James", "Maria"];
+        const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis"];
+        const universities = ["Harvard University", "Stanford University", "MIT", "UC Berkeley", "Yale University"];
+        const majors = ["Computer Science", "Engineering", "Business", "Psychology", "Biology", "Mathematics"];
+        const scholarshipTypes = ["Academic Merit", "Need-Based", "Athletic", "Research Grant", "STEM Excellence"];
+
+        function getRandomElement(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        function generateRandomGPA() {
+            return (Math.random() * 1.5 + 2.5).toFixed(2);
+        }
+
+        function generateRandomAmount() {
+            return Math.floor(Math.random() * 45000) + 5000;
+        }
+
+        function generateRandomDate(start, end) {
+            return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+        }
+
+        function generateRandomEmail(firstName, lastName) {
+            const domains = ["gmail.com", "yahoo.com", "outlook.com", "university.edu"];
+            return `${firstName.toLowerCase()}.${lastName.toLowerCase()}@${getRandomElement(domains)}`;
+        }
+
+        function createRandomScholarshipApplication() {
+            const firstName = getRandomElement(firstNames);
+            const lastName = getRandomElement(lastNames);
+            
+            return {
+                firstName: firstName,
+                lastName: lastName,
+                fullName: `${firstName} ${lastName}`,
+                email: generateRandomEmail(firstName, lastName),
+                university: getRandomElement(universities),
+                major: getRandomElement(majors),
+                gpa: parseFloat(generateRandomGPA()),
+                graduationYear: Math.floor(Math.random() * 4) + 2024,
+                scholarshipType: getRandomElement(scholarshipTypes),
+                requestedAmount: generateRandomAmount(),
+                applicationDate: generateRandomDate(new Date(2024, 0, 1), new Date()),
+                status: getRandomElement(["Pending", "Under Review", "Approved", "Rejected"]),
+                createdAt: new Date(),
+                testData: true // Mark as test data
+            };
+        }
+
+        function createRandomScholarshipProgram() {
+            const scholarshipName = `${getRandomElement(scholarshipTypes)} ${getRandomElement(["Foundation", "Program", "Award"])}`;
+            
+            return {
+                name: scholarshipName,
+                description: `The ${scholarshipName} provides financial assistance to deserving students.`,
+                totalAmount: generateRandomAmount() * 10,
+                maxIndividualAward: generateRandomAmount(),
+                minGpaRequirement: parseFloat((Math.random() * 1 + 2.5).toFixed(2)),
+                applicationDeadline: generateRandomDate(new Date(), new Date(2025, 11, 31)),
+                isActive: Math.random() > 0.2,
+                createdAt: new Date(),
+                testData: true
+            };
+        }
+
+        function createRandomUser() {
+            const firstName = getRandomElement(firstNames);
+            const lastName = getRandomElement(lastNames);
+            
+            return {
+                firstName: firstName,
+                lastName: lastName,
+                email: generateRandomEmail(firstName, lastName),
+                role: getRandomElement(["administrator", "reviewer", "student"]),
+                isActive: true,
+                createdAt: new Date(),
+                testData: true
+            };
+        }
+
+        async function addSampleApplications(count = 10) {
+            log(`🚀 Adding ${count} sample scholarship applications...`);
+            showStatus(`Adding ${count} scholarship applications...`, 'loading');
+            
+            try {
+                for (let i = 0; i < count; i++) {
+                    const applicationData = createRandomScholarshipApplication();
+                    const docRef = await addDoc(collection(db, "scholarship_applications"), applicationData);
+                    log(`✅ Application ${i + 1} added with ID: ${docRef.id}`);
+                }
+                log(`🎉 Successfully added ${count} scholarship applications!`);
+                showStatus(`Successfully added ${count} scholarship applications!`, 'success');
+            } catch (error) {
+                log(`❌ Error adding applications: ${error.message}`);
+                if (error.code === 'permission-denied') {
+                    log(`🔒 Permission denied! Please update your Firestore rules as shown above.`);
+                }
+                showStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function addSamplePrograms(count = 5) {
+            log(`🚀 Adding ${count} sample scholarship programs...`);
+            showStatus(`Adding ${count} scholarship programs...`, 'loading');
+            
+            try {
+                for (let i = 0; i < count; i++) {
+                    const programData = createRandomScholarshipProgram();
+                    const docRef = await addDoc(collection(db, "scholarship_programs"), programData);
+                    log(`✅ Program ${i + 1} added with ID: ${docRef.id}`);
+                }
+                log(`🎉 Successfully added ${count} scholarship programs!`);
+                showStatus(`Successfully added ${count} scholarship programs!`, 'success');
+            } catch (error) {
+                log(`❌ Error adding programs: ${error.message}`);
+                if (error.code === 'permission-denied') {
+                    log(`🔒 Permission denied! Please update your Firestore rules as shown above.`);
+                }
+                showStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function addSampleUsers(count = 3) {
+            log(`🚀 Adding ${count} sample users...`);
+            showStatus(`Adding ${count} users...`, 'loading');
+            
+            try {
+                for (let i = 0; i < count; i++) {
+                    const userData = createRandomUser();
+                    const docRef = await addDoc(collection(db, "users"), userData);
+                    log(`✅ User ${i + 1} added with ID: ${docRef.id}`);
+                }
+                log(`🎉 Successfully added ${count} users!`);
+                showStatus(`Successfully added ${count} users!`, 'success');
+            } catch (error) {
+                log(`❌ Error adding users: ${error.message}`);
+                if (error.code === 'permission-denied') {
+                    log(`🔒 Permission denied! Please update your Firestore rules as shown above.`);
+                }
+                showStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function readCollectionData() {
+            const collections = ["scholarship_applications", "scholarship_programs", "users"];
+            log("📖 Reading collection data...");
+            showStatus("Reading collection data...", 'loading');
+            
+            try {
+                for (const collectionName of collections) {
+                    log(`\n--- ${collectionName.toUpperCase()} ---`);
+                    const querySnapshot = await getDocs(collection(db, collectionName));
+                    log(`Found ${querySnapshot.size} documents in ${collectionName}`);
+                    
+                    querySnapshot.forEach((doc, index) => {
+                        if (index < 2) { // Show first 2 documents
+                            const data = doc.data();
+                            log(`📄 ${doc.id}: ${data.name || data.fullName || data.firstName || 'Document'}`);
+                        }
+                    });
+                    if (querySnapshot.size > 2) {
+                        log(`... and ${querySnapshot.size - 2} more documents`);
+                    }
+                }
+                showStatus("Successfully read collection data!", 'success');
+            } catch (error) {
+                log(`❌ Error reading data: ${error.message}`);
+                showStatus(`Error reading data: ${error.message}`, 'error');
+            }
+        }
+
+        async function populateAllCollections() {
+            log("🚀 Starting to populate all collections...");
+            showStatus("Populating all collections...", 'loading');
+            
+            try {
+                await addSampleApplications(15);
+                log("");
+                await addSamplePrograms(8);
+                log("");
+                await addSampleUsers(5);
+                log("\n🎉 All collections populated successfully!");
+                showStatus("All collections populated successfully!", 'success');
+            } catch (error) {
+                log(`❌ Error during population: ${error.message}`);
+                showStatus(`Error during population: ${error.message}`, 'error');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('populateAllBtn').addEventListener('click', populateAllCollections);
+        document.getElementById('addApplicationsBtn').addEventListener('click', () => addSampleApplications(10));
+        document.getElementById('addProgramsBtn').addEventListener('click', () => addSamplePrograms(5));
+        document.getElementById('addUsersBtn').addEventListener('click', () => addSampleUsers(3));
+        document.getElementById('readDataBtn').addEventListener('click', readCollectionData);
+        document.getElementById('clearLogBtn').addEventListener('click', () => {
+            output.innerHTML = '';
+            status.innerHTML = '';
+            log('🧹 Log cleared');
+        });
+
+        // Initial message
+        log('🔥 Firebase Simple Test loaded (No Authentication Required)');
+        log('📋 Available collections: scholarship_applications, scholarship_programs, users');
+        log('⚠️  REMEMBER: Update Firestore rules to allow writes without auth!');
+        log('🖱️  Click any button above to start adding sample data.');
+        showStatus('Ready to use! Make sure Firestore rules allow writes.', 'success');
+    </script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Guest Submission</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button {
+            background: #4A90E2;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #357abd;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Firebase Guest Submission Test</h1>
+        <p>This page tests if guest (unauthenticated) submissions work properly with your Firebase configuration.</p>
+        
+        <div class="test-section">
+            <h3>Firebase Connection Test</h3>
+            <button onclick="testFirebaseConnection()">Test Firebase Connection</button>
+            <div id="connectionStatus"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Guest Submission Test</h3>
+            <button onclick="testGuestSubmission()">Test Guest Submission</button>
+            <div id="submissionStatus"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Quick Links</h3>
+            <button onclick="window.location.href='apply.html'">Go to Application Form</button>
+            <button onclick="window.location.href='index.html'">Go to Homepage</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "444649593589",
+            appId: "1:444649593589:web:5b5ad152bce5fca1e3c2ea"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Make functions global
+        window.testFirebaseConnection = async function() {
+            const statusDiv = document.getElementById('connectionStatus');
+            statusDiv.innerHTML = '<div class="info">Testing Firebase connection...</div>';
+            
+            try {
+                // Try to access Firestore
+                const testDoc = {
+                    test: true,
+                    timestamp: new Date(),
+                    type: 'connection_test'
+                };
+                
+                // This should succeed if Firebase is configured correctly
+                console.log('Testing Firestore connection...');
+                statusDiv.innerHTML = '<div class="success">✅ Firebase connection successful!</div>';
+                
+            } catch (error) {
+                console.error('Firebase connection error:', error);
+                statusDiv.innerHTML = `<div class="error">❌ Firebase connection failed: ${error.message}</div>`;
+            }
+        };
+
+        window.testGuestSubmission = async function() {
+            const statusDiv = document.getElementById('submissionStatus');
+            statusDiv.innerHTML = '<div class="info">Testing guest submission...</div>';
+            
+            try {
+                const guestId = `guest_test_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
+                const applicationId = `TEST-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+                
+                const testApplicationData = {
+                    applicationId,
+                    userId: null,
+                    guestId: guestId,
+                    submissionType: 'guest',
+                    applicantInfo: {
+                        surname: 'TestGuest',
+                        firstname: 'Test',
+                        fullName: 'Test TestGuest',
+                        email: 'test.guest@example.com',
+                        applicantType: 'freshman',
+                        yearLevel: 1,
+                        course: 'Computer Science'
+                    },
+                    documents: {},
+                    applicationStatus: {
+                        status: 'Test Submission',
+                        statusHistory: [
+                            {
+                                status: 'Test Submission',
+                                timestamp: new Date(),
+                                updatedBy: 'test_system',
+                                notes: 'Test guest submission from test page'
+                            }
+                        ]
+                    },
+                    metadata: {
+                        submittedAt: new Date(),
+                        updatedAt: new Date(),
+                        browserInfo: navigator.userAgent,
+                        applicationVersion: 'test_1.0',
+                        testSubmission: true
+                    }
+                };
+
+                console.log('Attempting guest submission...');
+                console.log('Auth state:', auth.currentUser);
+                console.log('Application data:', testApplicationData);
+                
+                const docRef = await addDoc(collection(db, 'scholarship_applications'), testApplicationData);
+                
+                statusDiv.innerHTML = `
+                    <div class="success">
+                        ✅ Guest submission successful!<br>
+                        <strong>Document ID:</strong> ${docRef.id}<br>
+                        <strong>Application ID:</strong> ${applicationId}<br>
+                        <strong>Guest ID:</strong> ${guestId}
+                    </div>
+                `;
+                
+                console.log('Test submission successful:', docRef.id);
+                
+            } catch (error) {
+                console.error('Guest submission error:', error);
+                statusDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Guest submission failed: ${error.message}<br>
+                        <small>Check console for details. You may need to update your Firestore security rules.</small>
+                    </div>
+                `;
+            }
+        };
+    </script>
+</body>
+</html>
