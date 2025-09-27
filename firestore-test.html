@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firestore Test</title>
+</head>
+<body>
+    <h1>Firestore Connection Test</h1>
+    <div id="status">Testing...</div>
+    <div id="results"></div>
+    
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, addDoc, doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "316123000523",
+            appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+            measurementId: "G-QW1PMQZMSZ"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        const statusDiv = document.getElementById('status');
+        const resultsDiv = document.getElementById('results');
+        
+        function log(message, type = 'info') {
+            console.log(message);
+            const p = document.createElement('p');
+            p.textContent = new Date().toLocaleTimeString() + ': ' + message;
+            p.style.color = type === 'error' ? 'red' : type === 'success' ? 'green' : 'black';
+            resultsDiv.appendChild(p);
+        }
+        
+        async function testFirestore() {
+            log('🔄 Testing Firestore connection...');
+            
+            try {
+                // Test 1: Try to write to test collection without authentication
+                log('Test 1: Writing to test collection (no auth)...');
+                try {
+                    await addDoc(collection(db, 'test'), {
+                        message: 'Hello Firestore!',
+                        timestamp: new Date(),
+                        test: true
+                    });
+                    log('✅ Test 1 PASSED: Write without auth successful', 'success');
+                } catch (error) {
+                    log(`❌ Test 1 FAILED: ${error.code} - ${error.message}`, 'error');
+                }
+                
+                // Test 2: Try to write to scholarship_applications without auth (guest submission)
+                log('Test 2: Writing to scholarship_applications (guest)...');
+                try {
+                    await addDoc(collection(db, 'scholarship_applications'), {
+                        submissionType: 'guest',
+                        guestId: 'test_guest_' + Date.now(),
+                        userId: null,
+                        applicantInfo: {
+                            firstname: 'Test',
+                            surname: 'User',
+                            email: 'test@example.com'
+                        },
+                        metadata: {
+                            submittedAt: new Date(),
+                            test: true
+                        }
+                    });
+                    log('✅ Test 2 PASSED: Guest application write successful', 'success');
+                } catch (error) {
+                    log(`❌ Test 2 FAILED: ${error.code} - ${error.message}`, 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ General error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Start testing
+        statusDiv.textContent = 'Running Firestore tests...';
+        testFirestore().then(() => {
+            statusDiv.textContent = 'Tests completed. Check results below.';
+        });
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Admin Account | GRC-MLALAF Scholarship</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 600px;
+            width: 100%;
+            padding: 3rem;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #4A90E2;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            color: #856404;
+        }
+        
+        .warning-box h3 {
+            margin-bottom: 0.5rem;
+            color: #856404;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: #f9f9f9;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4A90E2;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+        
+        .password-toggle {
+            position: relative;
+        }
+        
+        .password-toggle button {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            font-size: 1.2rem;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(74, 144, 226, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .message {
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 4px solid;
+            display: none;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-color: #bee5eb;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #4A90E2;
+            text-decoration: none;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            color: #357ABD;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .info-section {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .info-section h3 {
+            color: #4A90E2;
+            margin-bottom: 1rem;
+        }
+        
+        .info-section ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .info-section li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .info-section li:last-child {
+            border-bottom: none;
+        }
+        
+        .info-section li strong {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="login.html" class="back-link">
+            ← Back to Login
+        </a>
+        
+        <div class="header">
+            <h1>🔧 Create Admin Account</h1>
+            <p>Set up administrator access for the scholarship system</p>
+        </div>
+        
+        <div class="warning-box">
+            <h3>⚠️ Security Notice</h3>
+            <p><strong>This tool should only be used during initial system setup.</strong> After creating your admin accounts, remove or secure access to this page to prevent unauthorized admin account creation.</p>
+        </div>
+        
+        <form id="adminForm">
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="password-toggle">
+                    <input type="password" id="password" required minlength="8">
+                    <button type="button" onclick="togglePassword('password')">👁️</button>
+                </div>
+                <small style="color: #666; font-size: 0.9rem;">Minimum 8 characters recommended for admin accounts</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <div class="password-toggle">
+                    <input type="password" id="confirmPassword" required minlength="8">
+                    <button type="button" onclick="togglePassword('confirmPassword')">👁️</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="role">Administrator Role</label>
+                <select id="role" required>
+                    <option value="">Select Role</option>
+                    <option value="administrator">Administrator (Full System Access)</option>
+                    <option value="reviewer">Reviewer (Application Review Only)</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="createBtn">
+                Create Admin Account
+            </button>
+        </form>
+        
+        <div id="message" class="message"></div>
+        
+        <div class="info-section">
+            <h3>📋 Role Descriptions</h3>
+            <ul>
+                <li><strong>Administrator:</strong> Full access to all system functions, user management, application review, and system settings.</li>
+                <li><strong>Reviewer:</strong> Can review and process scholarship applications but cannot manage users or system settings.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword,
+            updateProfile
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "316123000523",
+            appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+            measurementId: "G-QW1PMQZMSZ"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // DOM Elements
+        const form = document.getElementById('adminForm');
+        const messageDiv = document.getElementById('message');
+        const createBtn = document.getElementById('createBtn');
+
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function setLoading(isLoading) {
+            if (isLoading) {
+                createBtn.disabled = true;
+                createBtn.innerHTML = '<span class="loading"></span> Creating Account...';
+            } else {
+                createBtn.disabled = false;
+                createBtn.textContent = 'Create Admin Account';
+            }
+        }
+
+        // Create admin profile in Firestore
+        async function createAdminProfile(user, adminData) {
+            try {
+                const userDocRef = doc(db, 'users', user.uid);
+                
+                const profileData = {
+                    displayName: `${adminData.firstName} ${adminData.lastName}`,
+                    email: user.email,
+                    firstName: adminData.firstName,
+                    lastName: adminData.lastName,
+                    role: adminData.role,
+                    admin: true, // Legacy field for compatibility
+                    isActive: true,
+                    createdAt: new Date(),
+                    createdBy: 'system_setup',
+                    permissions: adminData.role === 'administrator' ? 
+                        ['read_all', 'write_all', 'manage_users', 'system_admin'] : 
+                        ['read_applications', 'review_applications']
+                };
+                
+                await setDoc(userDocRef, profileData);
+                console.log('Admin profile created successfully');
+                
+                return profileData;
+            } catch (error) {
+                console.error('Error creating admin profile:', error);
+                throw error;
+            }
+        }
+
+        // Form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const role = document.getElementById('role').value;
+            
+            // Validation
+            if (!firstName || !lastName || !email || !password || !role) {
+                showMessage('Please fill in all fields.', 'error');
+                return;
+            }
+            
+            if (password.length < 8) {
+                showMessage('Password must be at least 8 characters long for admin accounts.', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showMessage('Passwords do not match.', 'error');
+                return;
+            }
+            
+            setLoading(true);
+            
+            try {
+                showMessage('Creating Firebase Authentication account...', 'info');
+                
+                // Create Firebase Auth user
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                console.log('Auth user created:', user.uid);
+                
+                // Update display name
+                await updateProfile(user, {
+                    displayName: `${firstName} ${lastName}`
+                });
+                
+                showMessage('Creating admin profile in database...', 'info');
+                
+                // Create admin profile in Firestore
+                const profileData = await createAdminProfile(user, {
+                    firstName,
+                    lastName,
+                    role
+                });
+                
+                showMessage(
+                    `✅ Admin account created successfully!\n\n` +
+                    `Email: ${email}\n` +
+                    `Role: ${role}\n` +
+                    `User ID: ${user.uid}\n\n` +
+                    `The admin can now log in using the main login page.`, 
+                    'success'
+                );
+                
+                // Reset form
+                form.reset();
+                
+                console.log('Admin account creation completed:', {
+                    uid: user.uid,
+                    email: email,
+                    role: role,
+                    profileData: profileData
+                });
+                
+            } catch (error) {
+                console.error('Admin account creation failed:', error);
+                
+                let errorMessage = 'Failed to create admin account. ';
+                
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage += 'An account with this email already exists.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage += 'Please enter a valid email address.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage += 'Password is too weak. Please use a stronger password.';
+                        break;
+                    case 'auth/operation-not-allowed':
+                        errorMessage += 'Email/password accounts are not enabled. Please contact support.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage += 'Network error. Please check your internet connection.';
+                        break;
+                    case 'permission-denied':
+                        errorMessage += 'Database permission denied. Please check Firestore rules.';
+                        break;
+                    default:
+                        errorMessage += error.message;
+                }
+                
+                showMessage(errorMessage, 'error');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Password toggle function
+        window.togglePassword = function(inputId) {
+            const input = document.getElementById(inputId);
+            const button = input.nextElementSibling;
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                button.textContent = '👁️';
+            }
+        };
+
+        // Initialize
+        console.log('Admin Account Creator initialized');
+        showMessage('Ready to create admin accounts. Please fill in the form above.', 'info');
+        
+    </script>
+</body>
+</html>

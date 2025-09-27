@@ -1,0 +1,27 @@
+# TEMPORARY DEVELOPMENT RULES - FOR TESTING ONLY
+# These rules are more permissive and should be used only during development
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    # Allow all authenticated operations
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+    
+    # Allow guest submissions to scholarship_applications
+    match /scholarship_applications/{applicationId} {
+      allow create: if request.data.submissionType == 'guest' &&
+                       request.data.guestId != null &&
+                       request.data.userId == null;
+      allow read: if request.auth != null;
+    }
+    
+    # Allow user creation during signup
+    match /users/{userId} {
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if request.auth != null;
+    }
+  }
+}

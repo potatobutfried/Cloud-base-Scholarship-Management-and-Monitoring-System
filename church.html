@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Church Schedule | Global Reciprocal College</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #1565c0;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 15px rgba(21, 101, 192, 0.3);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .college-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .department {
+            font-size: 1.2rem;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+        }
+        
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .welcome-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #0d47a1;
+        }
+        
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            color: #1565c0;
+            margin-bottom: 1rem;
+        }
+        
+        /* Church Header */
+        .church-header {
+            background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .add-schedule-btn {
+            background: white;
+            color: #1565c0;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .add-schedule-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Church Schedule Container */
+        .schedule-container {
+            background: white;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 8px 25px rgba(21, 101, 192, 0.15);
+            overflow: hidden;
+            padding: 2rem;
+        }
+        
+        .schedule-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .table-header {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #0d47a1;
+            padding: 1.5rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1.5fr;
+            gap: 2rem;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-bottom: 2px solid rgba(21, 101, 192, 0.1);
+        }
+        
+        .schedule-row {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1.5fr;
+            gap: 2rem;
+            align-items: center;
+            border-bottom: 1px solid rgba(21, 101, 192, 0.1);
+            transition: all 0.3s ease;
+            background: white;
+            position: relative;
+        }
+        
+        .schedule-row:hover {
+            background: linear-gradient(135deg, #f3f8ff 0%, #e8f4fd 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(21, 101, 192, 0.1);
+        }
+        
+        .schedule-row:last-child {
+            border-bottom: none;
+        }
+        
+        .schedule-set {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #0d47a1;
+        }
+        
+        .care-group {
+            color: #1565c0;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: 25px;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .schedule-date {
+            color: #1565c0;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        /* Action Buttons */
+        .actions-bar {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(21, 101, 192, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(21, 101, 192, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #1565c0;
+            border: 2px solid #1565c0;
+        }
+        
+        .btn-secondary:hover {
+            background: #1565c0;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(21, 101, 192, 0.3);
+            position: relative;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+        }
+        
+        .close:hover {
+            color: #1565c0;
+        }
+        
+        .modal h2 {
+            color: #0d47a1;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #0d47a1;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #bbdefb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #1565c0;
+            box-shadow: 0 0 10px rgba(21, 101, 192, 0.2);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+            color: white;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(21, 101, 192, 0.4);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #1565c0;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #bbdefb;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-state h3 {
+            color: #0d47a1;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .empty-state p {
+            color: #1565c0;
+            font-size: 1rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+            
+            .college-name {
+                font-size: 1.4rem;
+            }
+            
+            .department {
+                font-size: 1rem;
+            }
+            
+            .admin-profile {
+                display: none;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+            
+            .church-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .table-header,
+            .schedule-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1.5rem;
+                text-align: center;
+            }
+            
+            .table-header {
+                display: none;
+            }
+            
+            .schedule-row {
+                border: none;
+                margin-bottom: 1rem;
+                border-radius: 15px;
+                box-shadow: 0 4px 15px rgba(21, 101, 192, 0.1);
+                background: white;
+            }
+            
+            .schedule-set {
+                margin-bottom: 0.5rem;
+            }
+            
+            .care-group, .schedule-date {
+                margin-bottom: 0.5rem;
+            }
+            
+            .actions-bar {
+                justify-content: center;
+            }
+            
+            .btn {
+                flex: 1;
+                min-width: 120px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo-section">
+                <button class="back-button" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="logo-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="logo-text">
+                    <div class="college-name">GLOBAL RECIPROCAL COLLEGE</div>
+                    <div class="department">Church Schedule Management</div>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="admin-profile">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin Panel</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="welcome-section">
+            <h1 class="welcome-title">Church Schedule</h1>
+            <p class="welcome-subtitle">Manage church services, care groups, and special events</p>
+        </div>
+
+        <!-- Actions Bar -->
+        <div class="actions-bar">
+            <button class="btn btn-secondary" onclick="refreshSchedule()">
+                <i class="fas fa-sync-alt"></i>
+                Refresh
+            </button>
+            <button class="btn btn-primary" onclick="openAddSchedule()">
+                <i class="fas fa-plus"></i>
+                Add Schedule
+            </button>
+        </div>
+
+        <!-- Church Header -->
+        <div class="church-header">
+            <div class="page-title">
+                <i class="fas fa-church"></i>
+                Church
+            </div>
+        </div>
+
+        <!-- Schedule Container -->
+        <div class="schedule-container">
+            <div class="schedule-table">
+                <div class="table-header">
+                    <div>SET</div>
+                    <div>CARE GROUP</div>
+                    <div>DATE</div>
+                </div>
+                
+                <!-- Sample Schedule Data -->
+                <div class="schedule-row">
+                    <div class="schedule-set">Morning Service</div>
+                    <div class="care-group">Youth Ministry</div>
+                    <div class="schedule-date">October 1, 2025</div>
+                </div>
+                
+                <div class="schedule-row">
+                    <div class="schedule-set">Evening Service</div>
+                    <div class="care-group">Adult Fellowship</div>
+                    <div class="schedule-date">October 1, 2025</div>
+                </div>
+                
+                <div class="schedule-row">
+                    <div class="schedule-set">Bible Study</div>
+                    <div class="care-group">Women's Group</div>
+                    <div class="schedule-date">October 3, 2025</div>
+                </div>
+                
+                <div class="schedule-row">
+                    <div class="schedule-set">Prayer Meeting</div>
+                    <div class="care-group">Men's Fellowship</div>
+                    <div class="schedule-date">October 5, 2025</div>
+                </div>
+                
+                <div class="schedule-row">
+                    <div class="schedule-set">Sunday School</div>
+                    <div class="care-group">Children's Ministry</div>
+                    <div class="schedule-date">October 8, 2025</div>
+                </div>
+                
+                <div class="schedule-row">
+                    <div class="schedule-set">Worship Service</div>
+                    <div class="care-group">Choir Ministry</div>
+                    <div class="schedule-date">October 8, 2025</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Schedule Modal -->
+    <div id="addScheduleModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addScheduleModal')">&times;</span>
+            <h2>Add Church Schedule</h2>
+            <form id="addScheduleForm" onsubmit="submitSchedule(event)">
+                <div class="form-group">
+                    <label for="scheduleSet">Set/Service Type</label>
+                    <select id="scheduleSet" name="scheduleSet" required>
+                        <option value="">Select Service Type</option>
+                        <option value="Morning Service">Morning Service</option>
+                        <option value="Evening Service">Evening Service</option>
+                        <option value="Bible Study">Bible Study</option>
+                        <option value="Prayer Meeting">Prayer Meeting</option>
+                        <option value="Sunday School">Sunday School</option>
+                        <option value="Worship Service">Worship Service</option>
+                        <option value="Youth Service">Youth Service</option>
+                        <option value="Special Event">Special Event</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="careGroup">Care Group</label>
+                    <input type="text" id="careGroup" name="careGroup" placeholder="Enter care group name" required>
+                </div>
+                <div class="form-group">
+                    <label for="scheduleDate">Date</label>
+                    <input type="date" id="scheduleDate" name="scheduleDate" required>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-plus"></i>
+                    Add Schedule
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Navigation function
+        function goBack() {
+            if (document.referrer) {
+                window.history.back();
+            } else {
+                window.location.href = 'admin.html';
+            }
+        }
+
+        // Modal functions
+        function openAddSchedule() {
+            document.getElementById('addScheduleModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Action functions
+        function refreshSchedule() {
+            const btn = event.target.closest('.btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                showNotification('Schedule refreshed successfully!');
+            }, 1500);
+        }
+
+        // Add schedule functionality
+        function submitSchedule(event) {
+            event.preventDefault();
+            
+            const set = document.getElementById('scheduleSet').value;
+            const careGroup = document.getElementById('careGroup').value;
+            const date = document.getElementById('scheduleDate').value;
+            
+            if (!set || !careGroup || !date) {
+                showNotification('Please fill in all fields.');
+                return;
+            }
+            
+            // Format date
+            const formattedDate = new Date(date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            // Create new schedule row
+            const newRow = createScheduleRow(set, careGroup, formattedDate);
+            
+            // Add to schedule table
+            const scheduleTable = document.querySelector('.schedule-table');
+            scheduleTable.appendChild(newRow);
+            
+            // Reset form and close modal
+            document.getElementById('addScheduleForm').reset();
+            closeModal('addScheduleModal');
+            
+            showNotification('Schedule added successfully!');
+            
+            // Animate new row
+            setTimeout(() => {
+                newRow.style.opacity = '1';
+                newRow.style.transform = 'translateY(0)';
+            }, 100);
+        }
+
+        function createScheduleRow(set, careGroup, date) {
+            const scheduleRow = document.createElement('div');
+            scheduleRow.className = 'schedule-row';
+            scheduleRow.style.opacity = '0';
+            scheduleRow.style.transform = 'translateY(-20px)';
+            scheduleRow.style.transition = 'all 0.3s ease';
+            
+            scheduleRow.innerHTML = `
+                <div class="schedule-set">${set}</div>
+                <div class="care-group">${careGroup}</div>
+                <div class="schedule-date">${date}</div>
+            `;
+            
+            return scheduleRow;
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #1565c0;
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                z-index: 1000;
+                font-weight: bold;
+                animation: slideIn 0.3s ease-out;
+            `;
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('addScheduleModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Add animations on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const rows = document.querySelectorAll('.schedule-row');
+            
+            rows.forEach((row, index) => {
+                setTimeout(() => {
+                    row.style.opacity = '1';
+                    row.style.transform = 'translateY(0)';
+                }, index * 150);
+                
+                row.style.opacity = '0';
+                row.style.transform = 'translateY(20px)';
+                row.style.transition = 'all 0.3s ease';
+            });
+        });
+    </script>
+</body>
+</html>

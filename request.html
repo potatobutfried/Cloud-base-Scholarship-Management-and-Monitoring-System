@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Requests | Global Reciprocal College</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #1565c0;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 15px rgba(21, 101, 192, 0.3);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .college-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .department {
+            font-size: 1.2rem;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+        }
+        
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .welcome-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #0d47a1;
+        }
+        
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            color: #1565c0;
+            margin-bottom: 1rem;
+        }
+        
+        .requests-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(21, 101, 192, 0.15);
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+        
+        .page-title {
+            background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+            color: white;
+            padding: 2rem;
+            font-size: 2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 0;
+        }
+        
+        .request-header {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 1.5rem 2rem;
+            display: grid;
+            grid-template-columns: 2fr 2fr 1fr 1fr;
+            gap: 1rem;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #0d47a1;
+            border-bottom: 2px solid rgba(21, 101, 192, 0.1);
+        }
+        
+        .request-item {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 2fr 2fr 1fr 1fr;
+            gap: 1rem;
+            align-items: center;
+            border-bottom: 1px solid rgba(21, 101, 192, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .request-item:hover {
+            background: linear-gradient(135deg, #f3f8ff 0%, #e8f4fd 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(21, 101, 192, 0.1);
+        }
+        
+        .request-item:last-child {
+            border-bottom: none;
+        }
+        
+        .student-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #0d47a1;
+        }
+        
+        .request-type {
+            color: #1565c0;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .request-type.excuse {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            color: #ef6c00;
+        }
+        
+        .request-type.exit {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #1565c0;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .btn:hover::before {
+            opacity: 1;
+        }
+        
+        .btn-approve {
+            background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .btn-approve:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        }
+        
+        .btn-decline {
+            background: linear-gradient(135deg, #f44336 0%, #ef5350 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+        }
+        
+        .btn-decline:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(244, 67, 54, 0.4);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #1565c0;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #bbdefb;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-state h3 {
+            color: #0d47a1;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .empty-state p {
+            color: #1565c0;
+            font-size: 1rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+            
+            .college-name {
+                font-size: 1.4rem;
+            }
+            
+            .department {
+                font-size: 1rem;
+            }
+            
+            .admin-profile {
+                display: none;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+                padding: 1.5rem;
+            }
+            
+            .request-header,
+            .request-item {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .request-header {
+                display: none;
+            }
+            
+            .request-item {
+                border: none;
+                margin-bottom: 1rem;
+                border-radius: 15px;
+                box-shadow: 0 4px 15px rgba(21, 101, 192, 0.1);
+                background: white;
+            }
+            
+            .action-buttons {
+                justify-self: stretch;
+                margin-top: 1rem;
+            }
+            
+            .btn {
+                flex: 1;
+                padding: 1rem;
+            }
+            
+            .student-name {
+                text-align: center;
+                margin-bottom: 0.5rem;
+            }
+            
+            .request-type {
+                text-align: center;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo-section">
+                <button class="back-button" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="logo-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="logo-text">
+                    <div class="college-name">GLOBAL RECIPROCAL COLLEGE</div>
+                    <div class="department">Student Request Management</div>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="admin-profile">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin Panel</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="welcome-section">
+            <h1 class="welcome-title">Student Requests</h1>
+            <p class="welcome-subtitle">Manage and approve student excuse and exit requests</p>
+        </div>
+        
+        <div class="requests-container">
+            <div class="page-title">
+                <i class="fas fa-clipboard-list"></i>
+                Pending Requests
+            </div>
+            <div class="request-header">
+                <div>Name</div>
+                <div>Request Type</div>
+                <div>Action</div>
+                <div></div>
+            </div>
+            
+            <!-- Sample Request Items -->
+            <div class="request-item">
+                <div class="student-name">John Smith</div>
+                <div class="request-type excuse">Excuse</div>
+                <div class="action-buttons">
+                    <button class="btn btn-approve" onclick="approveRequest('excuse-1')">APPROVE</button>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-decline" onclick="declineRequest('excuse-1')">DECLINE</button>
+                </div>
+            </div>
+            
+            <div class="request-item">
+                <div class="student-name">Maria Garcia</div>
+                <div class="request-type exit">Exit</div>
+                <div class="action-buttons">
+                    <button class="btn btn-approve" onclick="approveRequest('exit-1')">APPROVE</button>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-decline" onclick="declineRequest('exit-1')">DECLINE</button>
+                </div>
+            </div>
+            
+            <div class="request-item">
+                <div class="student-name">Ahmed Hassan</div>
+                <div class="request-type excuse">Excuse</div>
+                <div class="action-buttons">
+                    <button class="btn btn-approve" onclick="approveRequest('excuse-2')">APPROVE</button>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-decline" onclick="declineRequest('excuse-2')">DECLINE</button>
+                </div>
+            </div>
+            
+            <div class="request-item">
+                <div class="student-name">Emma Johnson</div>
+                <div class="request-type exit">Exit</div>
+                <div class="action-buttons">
+                    <button class="btn btn-approve" onclick="approveRequest('exit-2')">APPROVE</button>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-decline" onclick="declineRequest('exit-2')">DECLINE</button>
+                </div>
+            </div>
+            
+            <div class="request-item">
+                <div class="student-name">David Chen</div>
+                <div class="request-type excuse">Excuse</div>
+                <div class="action-buttons">
+                    <button class="btn btn-approve" onclick="approveRequest('excuse-3')">APPROVE</button>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-decline" onclick="declineRequest('excuse-3')">DECLINE</button>
+                </div>
+            </div>
+            
+            <div class="request-item">
+                <div class="student-name">Sofia Rodriguez</div>
+                <div class="request-type exit">Exit</div>
+                <div class="action-buttons">
+                    <button class="btn btn-approve" onclick="approveRequest('exit-3')">APPROVE</button>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-decline" onclick="declineRequest('exit-3')">DECLINE</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Navigation function
+        function goBack() {
+            // Check if there's a previous page in history
+            if (document.referrer) {
+                window.history.back();
+            } else {
+                // Default fallback - go to admin dashboard
+                window.location.href = 'admin.html';
+            }
+        }
+
+        // Request management functions
+        function approveRequest(requestId) {
+            if (confirm('Are you sure you want to approve this request?')) {
+                // Here you would typically make an API call to approve the request
+                console.log('Approving request:', requestId);
+                
+                // For demo purposes, we'll just show an alert and remove the item
+                alert('Request approved successfully!');
+                
+                // Remove the request item from the DOM
+                const requestItem = event.target.closest('.request-item');
+                if (requestItem) {
+                    requestItem.style.transition = 'all 0.5s ease';
+                    requestItem.style.transform = 'translateX(100%)';
+                    requestItem.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        requestItem.remove();
+                        checkEmptyState();
+                    }, 500);
+                }
+            }
+        }
+
+        function declineRequest(requestId) {
+            if (confirm('Are you sure you want to decline this request?')) {
+                // Here you would typically make an API call to decline the request
+                console.log('Declining request:', requestId);
+                
+                // For demo purposes, we'll just show an alert and remove the item
+                alert('Request declined.');
+                
+                // Remove the request item from the DOM
+                const requestItem = event.target.closest('.request-item');
+                if (requestItem) {
+                    requestItem.style.transition = 'all 0.5s ease';
+                    requestItem.style.transform = 'translateX(-100%)';
+                    requestItem.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        requestItem.remove();
+                        checkEmptyState();
+                    }, 500);
+                }
+            }
+        }
+
+        function checkEmptyState() {
+            const requestItems = document.querySelectorAll('.request-item');
+            const container = document.querySelector('.requests-container');
+            
+            if (requestItems.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>No pending requests</h3>
+                        <p>All requests have been processed.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Add hover effects and animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const requestItems = document.querySelectorAll('.request-item');
+            
+            requestItems.forEach((item, index) => {
+                // Stagger animation for initial load
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, index * 100);
+                
+                // Initial state for animation
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                item.style.transition = 'all 0.3s ease';
+            });
+        });
+
+        // Modal functions
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

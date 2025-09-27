@@ -870,9 +870,22 @@
                 };
 
                 // Submit to Firestore
-                console.log('Submitting application to Firestore...');
-                const docRef = await addDoc(collection(db, 'scholarship_applications'), applicationData);
-                console.log('Application submitted with document ID:', docRef.id);
+                console.log('🔄 Submitting application to Firestore...');
+                console.log('📋 Application data structure:', JSON.stringify(applicationData, null, 2));
+                console.log('🔐 Current user auth state:', currentUser ? 'Authenticated' : 'Guest');
+                console.log('🔗 Database connection:', db ? 'Connected' : 'Not connected');
+                
+                let docRef;
+                try {
+                    console.log('📤 Attempting to write to collection: scholarship_applications');
+                    docRef = await addDoc(collection(db, 'scholarship_applications'), applicationData);
+                    console.log('✅ Application submitted successfully with document ID:', docRef.id);
+                } catch (firestoreError) {
+                    console.error('❌ Firestore write failed:', firestoreError);
+                    console.error('Error code:', firestoreError.code);
+                    console.error('Error message:', firestoreError.message);
+                    throw firestoreError; // Re-throw to be caught by outer try-catch
+                }
                 
                 showStatus(`🎉 Application submitted successfully! 
                           Your application ID is: ${applicationId}
@@ -887,15 +900,25 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 
             } catch (error) {
-                console.error('Error submitting application:', error);
+                console.error('❌ Error submitting application:', error);
+                console.error('Full error object:', JSON.stringify(error, null, 2));
                 
                 let errorMessage = 'An error occurred while submitting your application.';
+                
                 if (error.code === 'permission-denied') {
-                    errorMessage = 'Permission denied. Please check your account status or contact support.';
+                    errorMessage = `🚫 Permission denied. This could be due to Firestore security rules. 
+                                   Please contact support with error code: ${error.code}`;
+                    console.error('🔐 Firestore permission denied - check security rules in Firebase Console');
                 } else if (error.code === 'storage/unauthorized') {
                     errorMessage = 'File upload failed due to security settings. Please contact support.';
+                } else if (error.code === 'unauthenticated') {
+                    errorMessage = '🔐 Authentication required. Please sign in and try again.';
+                } else if (error.code === 'failed-precondition') {
+                    errorMessage = '⚠️ Database rules validation failed. Please contact support.';
+                } else if (error.code === 'unavailable') {
+                    errorMessage = '🌐 Database temporarily unavailable. Please try again in a moment.';
                 } else if (error.message) {
-                    errorMessage += ' Error: ' + error.message;
+                    errorMessage += ` Error details: ${error.message}`;
                 }
                 
                 showStatus(errorMessage, false);

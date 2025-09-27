@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semester Management | Global Reciprocal College</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #1565c0;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 15px rgba(21, 101, 192, 0.3);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .college-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .department {
+            font-size: 1.2rem;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+        }
+        
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .welcome-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #0d47a1;
+        }
+        
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            color: #1565c0;
+            margin-bottom: 1rem;
+        }
+        
+        /* Semester Cards */
+        .semester-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .semester-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(21, 101, 192, 0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 3px solid transparent;
+        }
+        
+        .semester-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(21, 101, 192, 0.25);
+            border-color: #1565c0;
+        }
+        
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #1976d2;
+        }
+        
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #0d47a1;
+        }
+        
+        .card-description {
+            font-size: 0.95rem;
+            color: #1565c0;
+            line-height: 1.4;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 10px 30px rgba(21, 101, 192, 0.3);
+            position: relative;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+        }
+        
+        .close:hover {
+            color: #1565c0;
+        }
+        
+        .modal h2 {
+            color: #0d47a1;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+        
+        .modal h3 {
+            color: #1565c0;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #bbdefb;
+            padding-bottom: 0.5rem;
+        }
+        
+        .modal-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f8fbff 0%, #e8f4fd 100%);
+            border-radius: 15px;
+            border-left: 4px solid #1565c0;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #0d47a1;
+        }
+        
+        .modal input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #bbdefb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .modal input:focus {
+            outline: none;
+            border-color: #1565c0;
+            box-shadow: 0 0 10px rgba(21, 101, 192, 0.2);
+        }
+        
+        .submit-btn, .modal-btn, .add-btn {
+            background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+        }
+        
+        .submit-btn:hover, .modal-btn:hover, .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(21, 101, 192, 0.4);
+        }
+        
+        .apply-btn {
+            background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .slot-summary-container {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border: 2px solid #bbdefb;
+        }
+        
+        .department-list, .church-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+        
+        .button-list {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        
+        .add-department-container, .add-church-container {
+            margin-top: 1rem;
+        }
+        
+        #addDepartmentForm, #addChurchForm {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        #addDepartmentForm input, #addChurchForm input {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+            
+            .college-name {
+                font-size: 1.4rem;
+            }
+            
+            .department {
+                font-size: 1rem;
+            }
+            
+            .admin-profile {
+                display: none;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+            
+            .semester-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo-section">
+                <button class="back-button" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="logo-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="logo-text">
+                    <div class="college-name">GLOBAL RECIPROCAL COLLEGE</div>
+                    <div class="department">Semester Management</div>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="admin-profile">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin Panel</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="welcome-section">
+            <h1 class="welcome-title">Semester Management</h1>
+            <p class="welcome-subtitle">Configure current academic semester settings and manage scholar allocations</p>
+        </div>
+        
+        <div class="semester-grid">
+            <div class="semester-card" onclick="openNewSemester()">
+                <div class="card-icon">
+                    <i class="fas fa-calendar-plus"></i>
+                </div>
+                <div class="card-title">Start New Semester</div>
+                <div class="card-description">Configure new semester settings, scholar slots, and department allocations</div>
+            </div>
+            
+            <div class="semester-card" onclick="viewCurrentSemester()">
+                <div class="card-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="card-title">Current Semester Info</div>
+                <div class="card-description">View and manage current semester information and extend deadline</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- New Semester Modal -->
+    <div id="newSemesterModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('newSemesterModal')">&times;</span>
+            <h2>Start New Semester</h2>
+            <form id="newSemesterForm">
+                <label for="semName">Semester Name:</label>
+                <input type="text" id="semName" name="semName" required>
+
+                <label for="dateEnd">End Date:</label>
+                <input type="date" id="dateEnd" name="dateEnd" required>
+
+                <label for="gratis">Gratis:</label>
+                <input type="number" id="gratis" name="gratis" required>
+
+                <label for="fellowship">Fellowship:</label>
+                <input type="number" id="fellowship" name="fellowship" required>
+
+                <label for="penalty">Penalty:</label>
+                <input type="number" id="penalty" name="penalty" required>
+
+                <label for="sService">Social Service:</label>
+                <input type="number" id="sService" name="sService" required>
+
+                <button type="submit" class="submit-btn" id="setSemesterBtn">Set Semester Information</button>
+            </form>
+            <div id="semesterManagementContainer" class="hidden">
+                <div class="modal-section">
+                    <h3>Scholar Slot Management</h3>
+                    <div class="slot-summary-container">
+                        <strong>Current Slots: </strong><span id="slotSummary">Loading...</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="scholarSlotInput">Set Total Scholar Slots</label>
+                        <input type="number" id="scholarSlotInput" min="0" required>
+                        <button class="submit-btn apply-btn" id="applyLastSlotBtn">Apply Last Semester's Scholar Slot</button>
+                    </div>
+                    <div class="form-group">
+                        <button class="submit-btn" id="setScholarSlotBtn">Set Scholar Slot</button>
+                    </div>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>Department Slot Management</h3>
+                    <div id="departmentList" class="department-list">
+                        </div>
+                    <div class="add-department-container">
+                        <button class="add-btn" id="showAddDeptFormBtn">Add Department</button>
+                        <form id="addDepartmentForm" class="hidden">
+                            <input type="text" id="newDeptName" placeholder="Department Name" required>
+                            <input type="number" id="newDeptSlot" placeholder="Scholar Slots" min="0" required>
+                            <button type="submit" class="submit-btn">Add</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <h3>Church Schedule Management</h3>
+                    <div id="churchList" class="church-list">
+                    </div>
+                    <div class="add-church-container">
+                        <button class="add-btn" id="showAddChurchFormBtn">Add Church</button>
+                        <form id="addChurchForm" class="hidden">
+                        <input type="text" id="newChurchName" placeholder="Church Name" required>
+                        <button type="submit" class="submit-btn">Add</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <button id="saveSemesterBtn" class="hidden">Set Semester</button>
+        </div>
+    </div>
+
+    <!-- Current Semester Info Modal -->
+    <div id="currentSemesterInfoModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('currentSemesterInfoModal')">&times;</span>
+            <h2>Current Semester Info</h2>
+            <form id="editSemesterForm">
+                <div class="modal-section">
+                    <h3>Semester Information</h3>
+                    <p><strong>Semester Name:</strong> <span id="currentSemName"></span></p> 
+                    <p><strong>Date Start:</strong> <span id="currentDateStart"></span></p>
+                    <p><strong>Date End:</strong> <span id="currentDateEnd"></span></p>
+                    <p><strong>Gratis:</strong> <span id="currentGratis"></span></p>
+                    <p><strong>Fellowship:</strong> <span id="currentFellowship"></span></p>
+                    <p><strong>Penalty:</strong> <span id="currentPenalty"></span></p>
+                    <p><strong>Sunday Service:</strong> <span id="currentSService"></span></p>
+                    <div class="button-list">
+                        <button type="button" class="modal-btn" id="extendSemesterBtn">Extend Semester</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Navigation function
+        function goBack() {
+            // Check if there's a previous page in history
+            if (document.referrer) {
+                window.history.back();
+            } else {
+                // Default fallback - go to admin dashboard
+                window.location.href = 'admin.html';
+            }
+        }
+
+        // Modal functions
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        // Semester management functions
+        function openNewSemester() {
+            openModal('newSemesterModal');
+        }
+
+        function viewCurrentSemester() {
+            openModal('currentSemesterInfoModal');
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Add card hover animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.semester-card');
+            
+            cards.forEach((card, index) => {
+                // Stagger animation for initial load
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+                
+                // Initial state for animation
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.3s ease';
+            });
+        });
+    </script>
+</body>
+</html>
