@@ -1,0 +1,35 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Church team collection rules
+    match /Churchcollection/{document} {
+      allow read, write: if true;
+    }
+    
+    // System settings for semester management
+    match /system_settings/{document} {
+      allow read, write: if true;
+    }
+    
+    // Semester history tracking
+    match /semester_history/{document} {
+      allow read, write: if true;
+    }
+    
+    // User management
+    match /users/{document} {
+      allow read, write: if true;
+    }
+    
+    // Scholarship applications
+    match /scholarship_applications/{document} {
+      allow read, write: if true;
+    }
+    
+    // Optional: Allow read/write to other collections if needed
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

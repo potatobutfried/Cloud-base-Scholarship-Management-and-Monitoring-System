@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Semester - GRC-MLALAF Scholarship</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4A90E2 0%, #357abd 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            color: #4A90E2;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .form-input:focus, .form-select:focus {
+            border-color: #4A90E2;
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+        
+        .form-help {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: #4A90E2;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #357abd;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn-group .btn {
+            flex: 1;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .history-table th {
+            background: #4A90E2;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .history-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e6ed;
+            background: white;
+        }
+        
+        .history-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            max-width: 400px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .alert.show {
+            transform: translateX(0);
+        }
+        
+        .alert-success { background: #28a745; }
+        .alert-error { background: #dc3545; }
+        .alert-warning { background: #ffc107; color: #333; }
+        .alert-info { background: #17a2b8; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        
+        .empty-icon {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .history-table {
+                font-size: 0.9rem;
+            }
+            
+            .history-table th,
+            .history-table td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-calendar-alt"></i> Set Semester</h1>
+            <p>Manage academic semester settings and schedules</p>
+        </div>
+        
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Semester History -->
+            <div class="card semester-history">
+                <div class="card-title">
+                    <i class="fas fa-history"></i>
+                    Semester History
+                    <button class="btn btn-secondary btn-small" onclick="loadSemesterHistory()" style="margin-left: auto;">
+                        <i class="fas fa-refresh"></i> Refresh
+                    </button>
+                </div>
+                
+                <div id="historyContainer">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Academic Year</th>
+                                <th>Semester</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Max Scholarships</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <tr>
+                                <td colspan="7" class="empty-state">
+                                    <div class="empty-icon">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                    </div>
+                                    <div>Loading semester history...</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Semester Form -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-plus-circle"></i>
+                    Create/Update Semester
+                </div>
+                
+                <form id="semesterForm">
+                    <div class="form-group">
+                        <label class="form-label">Academic Year *</label>
+                        <input type="text" id="academicYear" class="form-input" 
+                               placeholder="2025-2026" pattern="[0-9]{4}-[0-9]{4}" required>
+                        <div class="form-help">Format: YYYY-YYYY (e.g., 2025-2026)</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Semester *</label>
+                        <select id="semester" class="form-select" required>
+                            <option value="">Select semester</option>
+                            <option value="1st Semester">1st Semester</option>
+                            <option value="2nd Semester">2nd Semester</option>
+                            <option value="Summer">Summer</option>
+                            <option value="Mid-Year">Mid-Year</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <input type="text" id="description" class="form-input" 
+                               placeholder="e.g., First Semester 2025-2026">
+                        <div class="form-help">Optional description for the semester</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Max Scholarships</label>
+                        <input type="number" id="maxScholarships" class="form-input" 
+                               min="1" value="1" placeholder="10">
+                        <div class="form-help">Maximum number of scholarships for this semester</div>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary" onclick="saveSemester()" id="saveBtn">
+                            <i class="fas fa-save"></i> Save Semester
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="duplicateSemester()">
+                            <i class="fas fa-copy"></i> Duplicate
+                        </button>
+                        <button type="reset" class="btn btn-secondary">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uL09djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "316123000523",
+            appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+            measurementId: "G-Q1TPMQZMSZ"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+        
+        // Global variables
+        let currentSemesterData = null;
+        let semesterHistory = [];
+        let editingId = null;
+        
+        // DOM Elements
+        const academicYearInput = document.getElementById('academicYear');
+        const semesterSelect = document.getElementById('semester');
+        const descriptionInput = document.getElementById('description');
+        const maxScholarshipsInput = document.getElementById('maxScholarships');
+        const saveBtn = document.getElementById('saveBtn');
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initializing Semester Management...');
+            loadSemesterHistory();
+        });
+        
+        // Load semester history
+        async function loadSemesterHistory() {
+            try {
+                console.log('📚 Loading semester history...');
+                
+                const snapshot = await db.collection('semester_history')
+                    .orderBy('timestamp', 'desc')
+                    .limit(50)
+                    .get();
+                
+                semesterHistory = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                
+                updateHistoryTable();
+                
+            } catch (error) {
+                console.error('❌ Error loading semester history:', error);
+                showHistoryError();
+            }
+        }
+        
+        // Update history table
+        function updateHistoryTable() {
+            const tableBody = document.getElementById('historyTableBody');
+            
+            if (semesterHistory.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-calendar-times"></i>
+                            </div>
+                            <div>No semester history found</div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tableBody.innerHTML = semesterHistory.map(semester => `
+                <tr>
+                    <td>${semester.academicYear || 'N/A'}</td>
+                    <td>${semester.semester || 'N/A'}</td>
+                    <td>${semester.description || semester.semesterDescription || 'N/A'}</td>
+                    <td>
+                        <span class="status-badge" style="background: ${semester.semesterStatus === 'Active' ? '#4CAF50' : '#ff9800'}">
+                            ${semester.semesterStatus || 'Inactive'}
+                        </span>
+                    </td>
+                    <td>${semester.maxScholarships || 'N/A'}</td>
+                    <td>${formatDate(semester.timestamp)}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary btn-small" onclick="editSemester('${semester.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-small" onclick="deleteSemester('${semester.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // Show history error
+        function showHistoryError() {
+            const tableBody = document.getElementById('historyTableBody');
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div>Error loading semester history</div>
+                    </td>
+                </tr>
+            `;
+        }
+        
+        // Save semester
+        async function saveSemester() {
+            try {
+                const academicYear = academicYearInput.value.trim();
+                const semester = semesterSelect.value;
+                const description = descriptionInput.value.trim();
+                const maxScholarships = parseInt(maxScholarshipsInput.value) || 1;
+                
+                // Validation
+                if (!academicYear || !semester) {
+                    showAlert('Please fill in Academic Year and Semester!', 'error');
+                    return;
+                }
+                
+                if (!/^\d{4}-\d{4}$/.test(academicYear)) {
+                    showAlert('Academic Year must be in format YYYY-YYYY (e.g., 2025-2026)', 'error');
+                    return;
+                }
+                
+                // Show loading
+                saveBtn.innerHTML = '<span class="loading"></span> Saving...';
+                saveBtn.disabled = true;
+                
+                const semesterData = {
+                    action: 'semester_updated',
+                    academicYear: academicYear,
+                    semester: semester,
+                    description: description || `${semester} ${academicYear}`,
+                    semesterDescription: description || `${semester} ${academicYear}`,
+                    semesterStatus: 'Active',
+                    semesterStartDate: '',
+                    semesterEndDate: '',
+                    applicationStartDate: '',
+                    applicationEndDate: '',
+                    maxScholarships: maxScholarships,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedBy: 'System Admin'
+                };
+                
+                if (editingId) {
+                    // Update existing semester
+                    await db.collection('semester_history').doc(editingId).update(semesterData);
+                    showAlert('✅ Semester updated successfully!', 'success');
+                    editingId = null;
+                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Semester';
+                } else {
+                    // Deactivate all existing active semesters first
+                    const activeSnapshot = await db.collection('semester_history')
+                        .where('semesterStatus', '==', 'Active')
+                        .get();
+                    
+                    const batch = db.batch();
+                    activeSnapshot.docs.forEach(doc => {
+                        batch.update(doc.ref, { semesterStatus: 'Inactive' });
+                    });
+                    
+                    // Add new semester
+                    const newSemesterRef = db.collection('semester_history').doc();
+                    batch.set(newSemesterRef, semesterData);
+                    
+                    await batch.commit();
+                    showAlert('✅ Semester created successfully!', 'success');
+                }
+                
+                // Reset form and reload data
+                document.getElementById('semesterForm').reset();
+                maxScholarshipsInput.value = '1';
+                
+                await loadSemesterHistory();
+                
+            } catch (error) {
+                console.error('❌ Error saving semester:', error);
+                showAlert('Error saving semester: ' + error.message, 'error');
+            } finally {
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Semester';
+                saveBtn.disabled = false;
+            }
+        }
+        
+        // Edit semester from history
+        async function editSemester(semesterId) {
+            try {
+                const doc = await db.collection('semester_history').doc(semesterId).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    editingId = semesterId;
+                    
+                    academicYearInput.value = data.academicYear || '';
+                    semesterSelect.value = data.semester || '';
+                    descriptionInput.value = data.description || data.semesterDescription || '';
+                    maxScholarshipsInput.value = data.maxScholarships || '1';
+                    
+                    saveBtn.innerHTML = '<i class="fas fa-edit"></i> Update Semester';
+                    showAlert('📝 Semester loaded for editing', 'info');
+                    
+                    // Scroll to form
+                    document.querySelector('.card:nth-child(2)').scrollIntoView({ behavior: 'smooth' });
+                }
+            } catch (error) {
+                console.error('❌ Error loading semester for edit:', error);
+                showAlert('Error loading semester for edit', 'error');
+            }
+        }
+        
+        // Delete semester
+        async function deleteSemester(semesterId) {
+            if (confirm('Are you sure you want to delete this semester? This action cannot be undone.')) {
+                try {
+                    await db.collection('semester_history').doc(semesterId).delete();
+                    showAlert('🗑️ Semester deleted successfully!', 'success');
+                    
+                    // Refresh data
+                    await loadSemesterHistory();
+                    
+                } catch (error) {
+                    console.error('❌ Error deleting semester:', error);
+                    showAlert('Error deleting semester: ' + error.message, 'error');
+                }
+            }
+        }
+        
+        // Duplicate semester
+        async function duplicateSemester() {
+            try {
+                // Get the latest active semester
+                const snapshot = await db.collection('semester_history')
+                    .where('semesterStatus', '==', 'Active')
+                    .orderBy('timestamp', 'desc')
+                    .limit(1)
+                    .get();
+                
+                if (!snapshot.empty) {
+                    const data = snapshot.docs[0].data();
+                    const currentYear = data.academicYear;
+                    const currentTerm = data.semester;
+                    
+                    // Generate next semester
+                    let nextYear, nextTerm;
+                    if (currentTerm === '1st Semester') {
+                        nextTerm = '2nd Semester';
+                        nextYear = currentYear;
+                    } else {
+                        nextTerm = '1st Semester';
+                        const yearParts = currentYear.split('-');
+                        const startYear = parseInt(yearParts[0]) + 1;
+                        nextYear = `${startYear}-${startYear + 1}`;
+                    }
+                    
+                    // Clear editing mode
+                    editingId = null;
+                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Semester';
+                    
+                    // Fill form with next semester data
+                    academicYearInput.value = nextYear;
+                    semesterSelect.value = nextTerm;
+                    descriptionInput.value = `${nextTerm} ${nextYear}`;
+                    maxScholarshipsInput.value = data.maxScholarships || '1';
+                    
+                    showAlert('📋 Next semester template created!', 'info');
+                    
+                    // Scroll to form
+                    document.querySelector('.card:nth-child(2)').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    showAlert('No active semester found to duplicate', 'warning');
+                }
+            } catch (error) {
+                console.error('❌ Error duplicating semester:', error);
+                showAlert('Error duplicating semester', 'error');
+            }
+        }
+        
+        // Reset form and clear editing mode
+        document.getElementById('semesterForm').addEventListener('reset', function() {
+            editingId = null;
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Semester';
+            maxScholarshipsInput.value = '1';
+        });
+        
+        // Utility functions
+        function formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        }
+        
+        function showAlert(message, type = 'info') {
+            // Remove existing alerts
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => alert.remove());
+            
+            // Create alert element
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Animate in
+            setTimeout(() => {
+                alertDiv.classList.add('show');
+            }, 100);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.parentNode.removeChild(alertDiv);
+                    }
+                }, 300);
+            }, 4000);
+        }
+        
+        console.log('🎓 Semester Management System initialized successfully!');
+    </script>
+</body>
+</html>
