@@ -15,13 +15,16 @@
             font-family: 'Arial', sans-serif;
             line-height: 1.6;
             color: #333;
+            padding-top: 72px; /* keep header offset */
         }
         
-        /* Header & Navigation */
+        /* Header & Navigation - tightened/professional spacing */
         .header {
             background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);
-            color: white;
-            padding: 1rem 0;
+            colo                    <div class="cta-buttons">
+                        <a href="pages/public/apply.html" class="apply-now-btn">Apply Now!</a>
+                        <a href="#renew" class="renew-now-btn">Renew Now!</a>white;
+            padding: 0;
             position: fixed;
             width: 100%;
             top: 0;
@@ -33,56 +36,85 @@
             max-width: 1200px;
             margin: 0 auto;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start; /* logo + nav start on the left */
             align-items: center;
-            padding: 0 2rem;
+            padding: 0 2rem; /* consistent side padding */
+            height: 72px;
+            gap: 0.5rem;
         }
         
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-right: 1rem; /* small separation from nav */
+        }
+
+        .logo-img {
+            height: 40px; /* slightly smaller to improve balance */
+            width: 40px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 1.125rem;
+            font-weight: 700;
+            white-space: nowrap;
         }
         
+        /* Nav links styled like a compact professional menu */
         .nav-links {
             display: flex;
             list-style: none;
-            gap: 2rem;
+            gap: 1rem; /* moderate gap between items */
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            white-space: nowrap; /* force single row */
         }
-        
+
+        .nav-links li { display: inline-block; }
+
         .nav-links a {
             color: white;
             text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        
-        .nav-links a:hover {
-            color: #FFD700;
-        }
-        
-        .login-btn {
-            background: white;
-            color: #4A90E2;
-            padding: 0.5rem 1.5rem;
-            border-radius: 25px;
-            text-decoration: none;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: color 0.2s, opacity 0.2s;
+            display: inline-block;
+            padding: 0.45rem 0.6rem; /* small but comfortable hit area */
+            border-radius: 6px;
+            opacity: 0.95;
         }
+        .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.06); opacity: 1; }
         
-        .login-btn:hover {
-            background: #FFD700;
-            color: #333;
+        /* Admin Login on the far right */
+        .login-btn {
+            background: #fff;
+            color: #2f6fb8;
+            padding: 0.35rem 0.9rem;
+            border-radius: 22px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: background 0.2s, transform 0.12s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            margin-left: auto; /* pushes it to the far right */
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
         }
+        .login-btn:hover { background: #ffd34d; color: #111; transform: translateY(-1px); }
         
-        /* Hero Section */
+        /* Hero - reduce oversized logo and tighten vertical spacing */
         .hero {
             background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);
             color: white;
-            padding: 8rem 0 4rem;
-            min-height: 100vh;
+            padding: 6rem 0 3rem; /* slightly less vertical padding for balance */
+            min-height: calc(100vh - 72px);
             display: flex;
             align-items: center;
+            justify-content: center;
             position: relative;
             overflow: hidden;
         }
@@ -102,11 +134,21 @@
         .hero-container {
             max-width: 1200px;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
+            display: flex;
+            flex-direction: row;
             align-items: center;
+            justify-content: center;
+            gap: 4rem;
             padding: 0 2rem;
+        }
+        
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            min-width: 300px;
+            max-width: 500px;
         }
         
         .hero-content h1 {
@@ -145,14 +187,20 @@
         }
         
         .hero-logo {
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 300px;
+            max-width: 400px;
         }
         
         .motortrade-logo {
-            width: 400px;
-            height: 400px;
-            position: relative;
+            width: 260px; /* smaller, professional scale */
+            height: 260px;
             margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .motortrade-logo svg {
@@ -170,7 +218,10 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 2rem;
-            text-align: center;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .about h2 {
@@ -180,17 +231,23 @@
         }
         
         .about-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            flex-direction: row;
             gap: 3rem;
             margin-top: 3rem;
             text-align: left;
+            align-items: flex-start;
+            justify-content: center;
+            width: 100%;
         }
         
         .about-text {
             font-size: 1rem;
             line-height: 1.8;
             color: #555;
+            flex: 1;
+            min-width: 250px;
+            max-width: 500px;
         }
         
         .about-text p {
@@ -208,6 +265,10 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 2rem;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .contact h2 {
@@ -222,12 +283,19 @@
         }
         
         .contact-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            display: flex;
+            flex-direction: row;
             gap: 2rem;
+            align-items: stretch;
+            justify-content: center;
+            width: 100%;
         }
         
         .contact-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             background: white;
             color: #333;
             padding: 2rem;
@@ -235,6 +303,10 @@
             text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             transition: transform 0.3s;
+            flex: 1;
+            min-width: 250px;
+            max-width: 350px;
+            margin: 0 auto;
         }
         
         .contact-card:hover {
@@ -291,6 +363,10 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 2rem;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .whats-new h2 {
@@ -301,16 +377,22 @@
         }
         
         .scholarship-info {
-            display: grid;
-            grid-template-columns: 1fr 400px;
+            display: flex;
+            flex-direction: row;
             gap: 3rem;
-            align-items: start;
+            align-items: flex-start;
+            justify-content: center;
+            width: 100%;
         }
         
-        .scholarship-content h3 {
-            color: #4A90E2;
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
+        .scholarship-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            flex: 2;
+            min-width: 300px;
+            max-width: 600px;
         }
         
         .requirements, .qualifications, .instructions {
@@ -371,6 +453,9 @@
             display: flex;
             gap: 1rem;
             margin-top: 2rem;
+            justify-content: flex-start;
+            align-items: center;
+            width: 100%;
         }
         
         .apply-now-btn, .renew-now-btn {
@@ -391,14 +476,17 @@
         }
         
         .scholarship-image {
-            background: #f0f0f0;
-            border-radius: 15px;
-            height: 300px;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: #f0f0f0;
+            border-radius: 15px;
+            height: 300px;
             color: #999;
             font-size: 1.1rem;
+            flex: 1;
+            min-width: 200px;
+            max-width: 400px;
         }
         
         /* Footer */
@@ -413,58 +501,90 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 2rem;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .footer-links {
             display: flex;
             justify-content: center;
+            align-items: center;
             gap: 2rem;
             margin-bottom: 1rem;
         }
+        
         
         .footer-links a {
             color: white;
             text-decoration: none;
             font-size: 0.9rem;
         }
-        
         .footer-links a:hover {
             color: #4A90E2;
         }
         
         /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-container,
+            .about-content,
+            .contact-cards,
+            .scholarship-info {
+                flex-direction: column;
+                align-items: center;
+                gap: 2rem;
+            }
+            .scholarship-content,
+            .scholarship-image,
+            .about-text,
+            .contact-card {
+                max-width: 100%;
+                min-width: 0;
+            }
+        }
         @media (max-width: 768px) {
+            .nav-container { padding: 0 1rem; overflow-x: auto; }
+            .nav-links { gap: 0.6rem; }
+            .login-btn { margin-left: 0.6rem; flex-shrink: 0; }
+            .logo-group {
+                justify-content: center;
+                margin-bottom: 1rem;
+                height: auto;
+            }
             .nav-links {
                 display: none;
             }
-            
-            .hero-container {
-                grid-template-columns: 1fr;
-                text-align: center;
+            .login-btn {
+                margin-left: 0;
+                margin-top: 1rem;
+                width: 100%;
+                justify-content: center;
             }
-            
-            .hero-content h1 {
-                font-size: 1.5rem;
-            }
-            
-            .hero-content h2 {
-                font-size: 2rem;
-            }
-            
-            .about-content {
-                grid-template-columns: 1fr;
-            }
-            
+            .hero-container,
+            .about-content,
+            .contact-cards,
             .scholarship-info {
-                grid-template-columns: 1fr;
+                flex-direction: column;
+                align-items: center;
+                gap: 2rem;
             }
-            
-            .contact-cards {
-                grid-template-columns: 1fr;
+            .hero-content {
+                align-items: center;
+                width: 100%;
             }
-            
+            .scholarship-content,
+            .scholarship-image,
+            .about-text,
+            .contact-card {
+                max-width: 100%;
+                min-width: 0;
+            }
             .action-buttons {
                 flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+                width: 100%;
             }
         }
     </style>
@@ -472,20 +592,22 @@
 <body>
     <!-- Header -->
     <header class="header">
-        <nav class="nav-container">
-            <div class="logo">GRC-MLALAF Scholarship</div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About Us</a></li>
-                <li><a href="#contact">Contact Us</a></li>
-                <li><a href="#whats-new">What's New?</a></li>
-                <li><a href="setsemester.html">Set Semester</a></li>
-                <li><a href="admin.html">Team Management</a></li>
-            </ul>
-            <a href="login.html" class="login-btn">Admin Login</a>
-        </nav>
-    </header>
-
+    <nav class="nav-container">
+        <div class="logo-group">
+            <img src="assets/images/motortrade-logo.png" alt="Motortrade Logo" class="logo-img">
+            <span class="logo-text">GRC-MLALAF Scholarship</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+            <li><a href="#whats-new">What's New?</a></li>
+                        <li><a href="pages/admin/setsemester.html">Set Semester</a></li>
+            <li><a href="pages/admin/admin.html">Team Management</a></li>
+        </ul>
+                <a href="pages/public/login.html" class="login-btn">Admin Login</a>
+    </nav>
+</header>
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="hero-container">
@@ -493,7 +615,7 @@
                 <h1>GOOD AFTERNOON!</h1>
                 <h2>Welcome to<br>GRC-MLALAF Scholarship</h2>
                 <p>It breaks barriers, opens doors, and reaches those once left behind. This is education without borders where learning adapts, empowers, and transforms lives.</p>
-                <a href="apply.html" class="apply-btn">Apply Now!</a>
+                <a href="pages/public/apply.html" class="apply-btn">Apply Now!</a>
             </div>
             <div class="hero-logo">
                 <div class="motortrade-logo">
@@ -634,7 +756,7 @@
                     </div>
 
                     <div class="action-buttons">
-                        <a href="apply.html" class="apply-now-btn">Apply Now!</a>
+                        <a href="pages/public/apply.html" class="apply-now-btn">Apply Now!</a>
                         <a href="#renew" class="renew-now-btn">Renew Now!</a>
                     </div>
                 </div>

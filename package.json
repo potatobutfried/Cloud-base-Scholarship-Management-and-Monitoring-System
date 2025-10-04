@@ -2,15 +2,15 @@
   "name": "scholarship-management-firebase",
   "version": "1.0.0",
   "description": "Cloud-based Scholarship Management and Monitoring System with Firebase integration",
-  "main": "firebase-sample-data.js",
+  "main": "scripts/firebase-sample-data.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "populate": "node firebase-sample-data.js",
+    "start": "node server/server.js",
+    "populate": "node scripts/firebase-sample-data.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "npx http-server . -p 3000 -c-1",
     "dev": "npx http-server . -p 3000 -o -c-1",
-    "server": "node server.js"
+    "server": "node server/server.js"
   },
   "dependencies": {
     "firebase": "^10.7.1"
