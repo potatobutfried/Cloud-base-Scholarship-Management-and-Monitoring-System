@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DELETE valjeremy Account</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+        h1 {
+            color: #d32f2f;
+            margin-bottom: 15px;
+            font-size: 42px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+        .url-box {
+            background: #e3f2fd;
+            border: 3px solid #1976d2;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: left;
+        }
+        .url-box-title {
+            color: #1565c0;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+        .url-input {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            border: 2px solid #1976d2;
+            border-radius: 8px;
+            font-family: monospace;
+            background: white;
+            cursor: pointer;
+        }
+        .url-hint {
+            margin-top: 10px;
+            color: #0d47a1;
+            font-size: 13px;
+        }
+        .url-box {
+            background: #e3f2fd;
+            border: 3px solid #1976d2;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: left;
+        }
+        .url-box-title {
+            color: #1565c0;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+        .url-input {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            border: 2px solid #1976d2;
+            border-radius: 8px;
+            font-family: monospace;
+            background: white;
+            cursor: pointer;
+        }
+        .url-hint {
+            margin-top: 10px;
+            color: #0d47a1;
+            font-size: 13px;
+        }
+        .delete-button {
+            width: 100%;
+            padding: 30px;
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 30px 0;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 8px 20px rgba(244, 67, 54, 0.4);
+        }
+        .delete-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(244, 67, 54, 0.6);
+        }
+        .delete-button:disabled {
+            background: #bbb;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .log {
+            background: #1a1a1a;
+            color: #0f0;
+            padding: 30px;
+            border-radius: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            line-height: 2;
+            margin-top: 30px;
+            max-height: 500px;
+            overflow-y: auto;
+            display: none;
+            text-align: left;
+        }
+        .log.show {
+            display: block;
+        }
+        .log-success { color: #4caf50; font-weight: bold; font-size: 18px; }
+        .log-error { color: #f44336; font-weight: bold; font-size: 18px; }
+        .log-warning { color: #ff9800; font-size: 16px; }
+        .log-info { color: #2196f3; }
+        .log-header {
+            color: #ffd700;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 20px 0 10px;
+            border-bottom: 3px solid #ffd700;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗑️ DELETE ACCOUNT</h1>
+        <p class="subtitle">Delete valjeremy account from Firestore</p>
+        
+        <div class="url-box">
+            <div class="url-box-title">📋 COPY THIS URL AND PASTE IN BROWSER:</div>
+            <input id="urlToCopy" readonly class="url-input"
+                   value="http://127.0.0.1:5500/scripts/DELETE-VALJEREMY.html"
+                   onclick="this.select(); document.execCommand('copy'); alert('✅ Copied! Now paste it in your browser address bar.');">
+            <div class="url-hint">
+                👆 Click the box above to copy, then paste in your browser address bar and press Enter
+            </div>
+        </div>
+
+        <button class="delete-button" id="deleteBtn" onclick="deleteValjeremy()">
+            🗑️ DELETE valjeremy ACCOUNT
+        </button>
+
+        <p style="color: #999; font-size: 14px;">
+            This will delete valjeremy@grc.edu.ph from Firestore users collection
+        </p>
+
+        <div id="log" class="log"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, query, where, getDocs, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "316123000523",
+            appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+            measurementId: "G-QW1PMQZMSZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            logDiv.classList.add('show');
+            const div = document.createElement('div');
+            div.className = `log-${type}`;
+            div.innerHTML = message;
+            logDiv.appendChild(div);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        window.deleteValjeremy = async function() {
+            const btn = document.getElementById('deleteBtn');
+            const logDiv = document.getElementById('log');
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ DELETING...';
+            logDiv.innerHTML = '';
+            logDiv.classList.add('show');
+            
+            const email = 'valjeremy@grc.edu.ph';
+            
+            try {
+                log('<div class="log-header">🔍 SEARCHING FOR ACCOUNT</div>', 'header');
+                log('Email: ' + email, 'info');
+                log('', 'info');
+                
+                const usersRef = collection(db, 'users');
+                const q = query(usersRef, where('email', '==', email));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    log('⚠️ Account not found in database', 'warning');
+                    log('', 'info');
+                    log('The account has already been deleted or never existed.', 'info');
+                    
+                    btn.disabled = false;
+                    btn.textContent = '⚠️ ACCOUNT NOT FOUND';
+                    return;
+                }
+                
+                const userDoc = querySnapshot.docs[0];
+                const userData = userDoc.data();
+                
+                log('✅ Account found!', 'success');
+                log('', 'info');
+                log('Email: ' + email, 'info');
+                log('Name: ' + (userData.fullName || userData.name || 'N/A'), 'info');
+                log('Role: ' + (userData.role || 'N/A'), 'info');
+                log('User ID: ' + userDoc.id, 'info');
+                log('', 'info');
+                
+                log('<div class="log-header">🗑️ DELETING ACCOUNT</div>', 'header');
+                log('Deleting from Firestore...', 'warning');
+                log('', 'info');
+                
+                await deleteDoc(doc(db, 'users', userDoc.id));
+                
+                log('✅✅✅ DELETED SUCCESSFULLY! ✅✅✅', 'success');
+                log('', 'success');
+                log('Account removed from Firestore database!', 'success');
+                log('', 'info');
+                log('Now go to CREATE-VALIDATOR-ACCOUNT.html to create a fresh one!', 'info');
+                
+                btn.textContent = '✅ DELETED!';
+                btn.style.background = 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)';
+                
+            } catch (error) {
+                log('', 'error');
+                log('❌❌❌ ERROR ❌❌❌', 'error');
+                log('', 'error');
+                log('Error: ' + error.message, 'error');
+                console.error(error);
+                
+                btn.disabled = false;
+                btn.textContent = '❌ ERROR - TRY AGAIN';
+            }
+        };
+    </script>
+</body>
+</html>

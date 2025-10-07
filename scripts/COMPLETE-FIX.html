@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COMPLETE FIX - All Accounts</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            color: #333;
+            border-radius: 15px;
+            padding: 30px;
+        }
+        h1 {
+            color: #e74c3c;
+            margin-bottom: 20px;
+            font-size: 32px;
+        }
+        .big-button {
+            width: 100%;
+            padding: 25px;
+            font-size: 24px;
+            font-weight: bold;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+        .big-button:hover {
+            background: #229954;
+        }
+        .big-button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        .step {
+            background: #ecf0f1;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 5px solid #3498db;
+        }
+        .step h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        .output {
+            background: #2c3e50;
+            color: #2ecc71;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin-top: 20px;
+            min-height: 100px;
+            max-height: 500px;
+            overflow-y: auto;
+            display: none;
+        }
+        .output.show {
+            display: block;
+        }
+        .output div {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .success {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        .error {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .warning {
+            color: #f39c12;
+        }
+        .info {
+            color: #3498db;
+        }
+        .header {
+            color: #f1c40f;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            border-bottom: 2px solid #f1c40f;
+            padding-bottom: 5px;
+        }
+        .user-box {
+            background: white;
+            border: 3px solid #3498db;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .user-box h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .user-box .detail {
+            margin: 5px 0;
+            padding: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+        }
+        .role-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .badge-admin { background: #e74c3c; color: white; }
+        .badge-validator { background: #3498db; color: white; }
+        .badge-scholar { background: #9b59b6; color: white; }
+        .badge-wrong { background: #95a5a6; color: white; text-decoration: line-through; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 COMPLETE ACCOUNT FIX</h1>
+        
+        <div class="step">
+            <h2>📋 What This Does:</h2>
+            <p style="line-height: 1.6;">
+                This tool will:<br>
+                1. Check if the 3 test accounts exist in your database<br>
+                2. Show you what roles they currently have<br>
+                3. Fix any wrong roles automatically<br>
+                4. Tell you exactly what to do next
+            </p>
+        </div>
+
+        <button class="big-button" id="fixBtn" onclick="checkAndFixEverything()">
+            ▶️ CLICK HERE TO CHECK & FIX EVERYTHING
+        </button>
+
+        <div id="output" class="output"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, query, where, getDocs, doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "316123000523",
+            appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+            measurementId: "G-QW1PMQZMSZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        window.db = db;
+        window.auth = auth;
+
+        function log(message, type = 'info') {
+            const output = document.getElementById('output');
+            output.classList.add('show');
+            const div = document.createElement('div');
+            div.className = type;
+            div.innerHTML = message;
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        async function checkAndFixAccount(email, password, correctRole, displayName) {
+            log(`<div class="header">🔍 Checking: ${displayName}</div>`, 'header');
+            log(`Email: ${email}`, 'info');
+            
+            try {
+                // Check if account exists in Firestore
+                const usersRef = collection(db, 'users');
+                const q = query(usersRef, where('email', '==', email));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    // Account doesn't exist - create it
+                    log(`⚠️  Account NOT FOUND in database`, 'warning');
+                    log(`Creating new account...`, 'info');
+                    
+                    try {
+                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                        const user = userCredential.user;
+                        
+                        log(`✅ Firebase Auth account created`, 'success');
+                        
+                        // Create Firestore document
+                        const userData = {
+                            uid: user.uid,
+                            email: email,
+                            fullName: displayName,
+                            name: displayName,
+                            role: correctRole,
+                            status: 'active',
+                            createdAt: serverTimestamp()
+                        };
+                        
+                        if (correctRole === 'admin') {
+                            userData.department = 'Administration';
+                            userData.position = 'System Administrator';
+                        } else if (correctRole === 'validator') {
+                            userData.department = 'Validation Office';
+                            userData.position = 'Application Validator';
+                        } else if (correctRole === 'scholar') {
+                            userData.course = 'BSIT';
+                            userData.yearLevel = '3';
+                            userData.department = 'IT Department';
+                        }
+                        
+                        await setDoc(doc(db, 'users', user.uid), userData);
+                        log(`✅ Firestore document created with role: ${correctRole}`, 'success');
+                        
+                        await signOut(auth);
+                        
+                        return { created: true, role: correctRole };
+                        
+                    } catch (authError) {
+                        if (authError.code === 'auth/email-already-in-use') {
+                            log(`⚠️  Auth account exists but no Firestore document!`, 'error');
+                            log(`❌ Please delete this account from Firebase Console and run this again`, 'error');
+                        } else {
+                            log(`❌ Error creating account: ${authError.message}`, 'error');
+                        }
+                        return { error: true };
+                    }
+                    
+                } else {
+                    // Account exists - check role
+                    const userDoc = querySnapshot.docs[0];
+                    const userData = userDoc.data();
+                    const currentRole = userData.role;
+                    
+                    log(`✅ Account found in database`, 'success');
+                    log(`Current role: <span class="role-badge badge-${currentRole}">${currentRole}</span>`, 'info');
+                    
+                    if (currentRole !== correctRole) {
+                        log(`❌ WRONG ROLE! Should be: ${correctRole}`, 'error');
+                        log(`Fixing role...`, 'warning');
+                        
+                        await setDoc(doc(db, 'users', userDoc.id), {
+                            role: correctRole
+                        }, { merge: true });
+                        
+                        log(`✅ FIXED! Role changed from "${currentRole}" to "${correctRole}"`, 'success');
+                        return { fixed: true, oldRole: currentRole, newRole: correctRole };
+                    } else {
+                        log(`✅ Role is correct!`, 'success');
+                        return { correct: true, role: currentRole };
+                    }
+                }
+                
+            } catch (error) {
+                log(`❌ ERROR: ${error.message}`, 'error');
+                return { error: true };
+            }
+        }
+
+        async function checkAndFixEverything() {
+            const btn = document.getElementById('fixBtn');
+            const output = document.getElementById('output');
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ WORKING...';
+            output.innerHTML = '';
+            output.classList.add('show');
+            
+            log('<div class="header">🚀 STARTING COMPLETE CHECK & FIX</div>', 'header');
+            log('═══════════════════════════════════════════════════════', 'info');
+            
+            const results = [];
+            
+            // Check/Fix Admin
+            results.push(await checkAndFixAccount(
+                'adminjeremy@grc.edu.ph',
+                'admin123',
+                'admin',
+                'Jeremy Admin'
+            ));
+            log('', 'info');
+            
+            // Check/Fix Validator
+            results.push(await checkAndFixAccount(
+                'valjeremy@grc.edu.ph',
+                'validator123',
+                'validator',
+                'Jeremy Validator'
+            ));
+            log('', 'info');
+            
+            // Check/Fix Scholar
+            results.push(await checkAndFixAccount(
+                'schojeremy@grc.edu.ph',
+                'scholar123',
+                'scholar',
+                'Jeremy Scholar'
+            ));
+            
+            log('═══════════════════════════════════════════════════════', 'success');
+            log('<div class="header">✅ COMPLETE!</div>', 'header');
+            log('', 'info');
+            
+            const hasErrors = results.some(r => r.error);
+            const hasFixed = results.some(r => r.fixed || r.created);
+            
+            if (hasErrors) {
+                log('⚠️  Some accounts have errors. See above for details.', 'warning');
+                log('You may need to manually check Firebase Console.', 'warning');
+            } else if (hasFixed) {
+                log('✅ ALL ACCOUNTS ARE NOW FIXED!', 'success');
+                log('', 'info');
+                log('🎯 NEXT STEPS:', 'info');
+                log('1. Go to: pages/public/login.html', 'info');
+                log('2. Test each account:', 'info');
+                log('   • adminjeremy / admin123 → Should go to ADMIN.HTML', 'info');
+                log('   • valjeremy / validator123 → Should go to VALIDATOR.HTML', 'info');
+                log('   • schojeremy / scholar123 → Should go to SCHOLAR-DASHBOARD.HTML', 'info');
+            } else {
+                log('✅ ALL ACCOUNTS ALREADY HAVE CORRECT ROLES!', 'success');
+                log('', 'info');
+                log('If validator still goes to wrong dashboard, the problem is in the login page code.', 'warning');
+            }
+            
+            btn.disabled = false;
+            btn.textContent = '✅ DONE - Click to Run Again';
+        }
+
+        window.checkAndFixEverything = checkAndFixEverything;
+    </script>
+</body>
+</html>

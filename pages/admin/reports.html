@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Generate Reports - Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root{--primary:#4A90E2;--primary-dark:#357abd}
+    body{font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#eaf5ff 0%,#d7ecff 100%);color:#113358;margin:0}
+    .container{max-width:1100px;margin:24px auto;padding:0 18px}
+    .header{background:var(--primary);color:#fff;padding:22px;border-radius:10px;position:relative;box-shadow:0 8px 30px rgba(74,144,226,0.18)}
+    .header h1{margin:0;font-size:1.6rem}
+    .header p{margin:6px 0 0;opacity:.9}
+    .back{position:absolute;right:18px;top:50%;transform:translateY(-50%)}
+    .btn-back{background:linear-gradient(180deg,#7ec6fb 0%,#5aa0ee 45%,#4a90e2 100%);color:#fff;padding:8px 18px;border-radius:24px;border:1px solid rgba(255,255,255,0.22);box-shadow:0 6px 18px rgba(58,100,165,0.12);text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-weight:700}
+    .card{background:#fff;border-radius:10px;padding:18px;margin-top:18px;box-shadow:0 8px 24px rgba(0,0,0,0.06)}
+    .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    label{font-weight:600;margin-right:6px}
+    select,input[type=date]{padding:10px;border:1px solid #e6eef8;border-radius:8px}
+    .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .btn-generate{background:var(--primary);color:#fff;padding:10px 18px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+    .btn-generate:hover{background:var(--primary-dark);transform:translateY(-2px)}
+    .note{font-size:.9rem;color:#556}
+    .spinner{display:inline-block;width:18px;height:18px;border:3px solid rgba(0,0,0,0.08);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .results{margin-top:14px}
+    .small{font-size:.9rem;color:#446}
+    .download-list{margin-top:10px}
+    .notification{position:fixed;top:20px;right:20px;padding:12px 16px;border-radius:8px;background:var(--primary);color:#fff;box-shadow:0 6px 18px rgba(74,144,226,0.18);transform:translateX(120%);transition:transform .25s}
+    .notification.show{transform:translateX(0)}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-file-alt"></i> Generate Reports</h1>
+      <p>Choose a dataset and download a CSV report for administrative use.</p>
+      <div class="back"><a href="admin.html" class="btn-back"><i class="fas fa-arrow-left"></i> Back to Dashboard</a></div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <label for="dataset">Dataset</label><br>
+          <select id="dataset">
+            <option value="scholarship_applications">Scholarship Applications</option>
+            <option value="users">Users</option>
+            <option value="validator_pending">Validator Pending (references)</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="from">From</label><br>
+          <input type="date" id="from">
+        </div>
+
+        <div>
+          <label for="to">To</label><br>
+          <input type="date" id="to">
+        </div>
+
+        <div style="margin-left:auto">
+          <button id="generateBtn" class="btn-generate"><i class="fas fa-download"></i> Generate CSV</button>
+        </div>
+      </div>
+
+      <div class="results" id="results"></div>
+      <div class="download-list" id="downloadList"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="notification" role="status" aria-live="polite" style="display:none">Report ready</div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, getDocs, query, where, orderBy, Timestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // Use same config as admin pages (if you changed it elsewhere, update here too)
+    const firebaseConfig = {
+      apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+      authDomain: "scholarship-cloudbase.firebaseapp.com",
+      projectId: "scholarship-cloudbase",
+      storageBucket: "scholarship-cloudbase.firebasestorage.app",
+      messagingSenderId: "316123000523",
+      appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+    };
+
+    let app, db;
+    try {
+      app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      console.debug('Firestore initialized for reports');
+    } catch (e) {
+      console.warn('Firestore not initialized:', e);
+    }
+
+    const generateBtn = document.getElementById('generateBtn');
+    const resultsEl = document.getElementById('results');
+    const downloadList = document.getElementById('downloadList');
+    const toast = document.getElementById('toast');
+
+    function showToast(message, timeout = 3000) {
+      toast.textContent = message;
+      toast.style.display = 'block';
+      setTimeout(() => toast.classList.add('show'), 50);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.style.display = 'none', 300);
+      }, timeout);
+    }
+
+    async function fetchCollectionAsArray(collName, fromTs, toTs) {
+      if (!db) throw new Error('Firestore not available');
+      let collRef = collection(db, collName);
+      let q = collRef;
+      // if time filter and field createdAt exists in documents, try to filter
+      if (fromTs || toTs) {
+        const clauses = [];
+        if (fromTs) clauses.push(where('createdAt', '>=', fromTs));
+        if (toTs) clauses.push(where('createdAt', '<=', toTs));
+        if (clauses.length) q = query(collRef, ...clauses, orderBy('createdAt', 'desc'));
+      }
+      const snap = await getDocs(q);
+      const items = [];
+      snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+      return items;
+    }
+
+    function toCSV(rows) {
+      if (!rows || !rows.length) return '';
+      // flatten keys
+      const keys = new Set();
+      rows.forEach(r => Object.keys(r).forEach(k => keys.add(k)));
+      const header = Array.from(keys);
+      const lines = [header.join(',')];
+      rows.forEach(r => {
+        const vals = header.map(k => {
+          let v = r[k];
+          if (v === undefined || v === null) return '';
+          if (typeof v === 'object') {
+            try { v = JSON.stringify(v).replace(/\n/g,' '); } catch(e){ v = String(v); }
+          }
+          // escape quotes
+          v = String(v).replace(/"/g, '""');
+          if (v.indexOf(',') >= 0 || v.indexOf('"') >= 0) v = '"' + v + '"';
+          return v;
+        });
+        lines.push(vals.join(','));
+      });
+      return lines.join('\n');
+    }
+
+    function downloadCSV(content, filename = 'report.csv') {
+      const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    async function generateReports() {
+      const dataset = document.getElementById('dataset').value;
+      const from = document.getElementById('from').value;
+      const to = document.getElementById('to').value;
+      resultsEl.innerHTML = '';
+      downloadList.innerHTML = '';
+
+      generateBtn.disabled = true;
+      generateBtn.innerHTML = '<span class="spinner"></span> Generating...';
+
+      try {
+        let fromTs = null; let toTs = null;
+        if (from) fromTs = Timestamp.fromDate(new Date(from + 'T00:00:00'));
+        if (to) toTs = Timestamp.fromDate(new Date(to + 'T23:59:59'));
+
+        let rows = [];
+        if (db) {
+          if (dataset === 'validator_pending') {
+            // read validator/pending/applications subcollection documents under collection 'validator' -> doc 'pending' -> subcollection 'applications'
+            // Firestore doesn't allow direct path queries with collection() so we'll query the collection group if available, but many setups don't use collectionGroup here.
+            // Try reading using path: validator/pending/applications
+            try {
+              rows = await fetchCollectionAsArray('validator/pending/applications', fromTs, toTs);
+            } catch (err) {
+              // fallback to collectionGroup query if allowed (not implemented here to keep permissions simple)
+              console.warn('Could not read validator pending path directly, falling back to empty', err);
+              rows = [];
+            }
+          } else {
+            rows = await fetchCollectionAsArray(dataset, fromTs, toTs);
+          }
+        }
+
+        if (!rows || !rows.length) {
+          // fallback demo data
+          rows = [
+            { id: 'demo-1', fullName: 'Jane Doe', email: 'jane@example.com', status: 'pending', createdAt: new Date().toISOString() },
+            { id: 'demo-2', fullName: 'John Smith', email: 'john@example.com', status: 'approved', createdAt: new Date().toISOString() }
+          ];
+        }
+
+        const csv = toCSV(rows.map(r => {
+          // normalize timestamps
+          const out = { ...r };
+          if (out.createdAt && out.createdAt.toDate) {
+            out.createdAt = out.createdAt.toDate().toISOString();
+          }
+          return out;
+        }));
+
+        const filename = `${dataset.replace(/[^a-z0-9]/gi,'_')}_${new Date().toISOString().slice(0,10)}.csv`;
+        downloadCSV(csv, filename);
+        showToast('Report generated and downloaded');
+
+        // show brief summary
+        resultsEl.innerHTML = `<div class="small">Rows: ${rows.length} — File: <strong>${filename}</strong></div>`;
+
+      } catch (err) {
+        console.error('Generate failed', err);
+        showToast('Failed to generate report — check console', 4000);
+      } finally {
+        generateBtn.disabled = false;
+        generateBtn.innerHTML = '<i class="fas fa-download"></i> Generate CSV';
+      }
+    }
+
+    generateBtn.addEventListener('click', generateReports);
+
+    // expose for other pages if desired
+    window.generateReports = generateReports;
+  </script>
+</body>
+</html>

@@ -33,78 +33,83 @@
         }
         
         .nav-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             display: flex;
-            justify-content: flex-start; /* logo + nav start on the left */
+            justify-content: space-between;
             align-items: center;
-            padding: 0 2rem; /* consistent side padding */
+            padding: 0 2rem;
             height: 72px;
-            gap: 0.5rem;
         }
         
         .logo-group {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-right: 1rem; /* small separation from nav */
+            gap: 0.75rem;
         }
 
         .logo-img {
-            height: 40px; /* slightly smaller to improve balance */
-            width: 40px;
+            height: 45px;
+            width: 45px;
             object-fit: contain;
         }
 
         .logo-text {
-            font-size: 1.125rem;
+            font-size: 1.2rem;
             font-weight: 700;
             white-space: nowrap;
         }
         
-        /* Nav links styled like a compact professional menu */
         .nav-links {
             display: flex;
             list-style: none;
-            gap: 1rem; /* moderate gap between items */
+            gap: 2rem;
             align-items: center;
-            margin: 0;
+            margin: 0 auto;
             padding: 0;
-            white-space: nowrap; /* force single row */
         }
 
-        .nav-links li { display: inline-block; }
+        .nav-links li { 
+            display: inline-block;
+        }
 
         .nav-links a {
             color: white;
             text-decoration: none;
             font-weight: 600;
-            transition: color 0.2s, opacity 0.2s;
+            transition: all 0.3s;
             display: inline-block;
-            padding: 0.45rem 0.6rem; /* small but comfortable hit area */
-            border-radius: 6px;
-            opacity: 0.95;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
         }
-        .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.06); opacity: 1; }
         
-        /* Admin Login on the far right */
+        .nav-links a:hover { 
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-1px);
+        }
+        
         .login-btn {
-            background: #fff;
-            color: #2f6fb8;
-            padding: 0.35rem 0.9rem;
-            border-radius: 22px;
+            background: #FFD700;
+            color: #333;
+            padding: 0.6rem 1.5rem;
+            border-radius: 25px;
             text-decoration: none;
             font-weight: 700;
-            transition: background 0.2s, transform 0.12s;
+            transition: all 0.3s;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            height: 40px;
-            margin-left: auto; /* pushes it to the far right */
             white-space: nowrap;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            font-size: 0.95rem;
         }
-        .login-btn:hover { background: #ffd34d; color: #111; transform: translateY(-1px); }
+        
+        .login-btn:hover { 
+            background: #FFC107;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
         
         /* Hero - reduce oversized logo and tighten vertical spacing */
         .hero {
@@ -132,14 +137,14 @@
         }
         
         .hero-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             display: flex;
             flex-direction: row;
             align-items: center;
-            justify-content: center;
-            gap: 4rem;
-            padding: 0 2rem;
+            justify-content: space-between;
+            gap: 5rem;
+            padding: 0 3rem;
         }
         
         .hero-content {
@@ -152,38 +157,43 @@
         }
         
         .hero-content h1 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
         
         .hero-content h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
             color: #FFD700;
+            line-height: 1.2;
         }
         
         .hero-content p {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
+            font-size: 1.15rem;
+            margin-bottom: 2.5rem;
             line-height: 1.8;
+            opacity: 0.95;
         }
         
         .apply-btn {
             background: #FFD700;
             color: #333;
-            padding: 1rem 2rem;
-            border-radius: 25px;
+            padding: 1.1rem 2.5rem;
+            border-radius: 30px;
             text-decoration: none;
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             display: inline-block;
             transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
         }
         
         .apply-btn:hover {
             background: #FFC107;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
         }
         
         .hero-logo {
@@ -602,8 +612,7 @@
             <li><a href="#about">About Us</a></li>
             <li><a href="#contact">Contact Us</a></li>
             <li><a href="#whats-new">What's New?</a></li>
-                        <li><a href="pages/admin/setsemester.html">Set Semester</a></li>
-            <li><a href="pages/admin/admin.html">Team Management</a></li>
+            <!-- removed on request: Validator, Set Semester, Team Management -->
         </ul>
                 <a href="pages/public/login.html" class="login-btn">Admin Login</a>
     </nav>
@@ -615,7 +624,9 @@
                 <h1>GOOD AFTERNOON!</h1>
                 <h2>Welcome to<br>GRC-MLALAF Scholarship</h2>
                 <p>It breaks barriers, opens doors, and reaches those once left behind. This is education without borders where learning adapts, empowers, and transforms lives.</p>
-                <a href="pages/public/apply.html" class="apply-btn">Apply Now!</a>
+                <div>
+                    <a href="pages/public/apply.html" class="apply-btn">Apply Now!</a>
+                </div>
             </div>
             <div class="hero-logo">
                 <div class="motortrade-logo">

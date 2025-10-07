@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Role Check</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        .result.success {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+        }
+        .result.error {
+            background: #ffebee;
+            border: 2px solid #f44336;
+        }
+        .result h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .info-row {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #555;
+        }
+        .info-value {
+            color: #333;
+            font-family: 'Courier New', monospace;
+            background: #f5f5f5;
+            padding: 4px 12px;
+            border-radius: 4px;
+        }
+        .role-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .role-admin {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .role-validator {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        .role-scholar {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+        .quick-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .quick-btn {
+            flex: 1;
+            padding: 8px;
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .quick-btn:hover {
+            background: #d0d0d0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Quick Role Checker</h1>
+        <p class="subtitle">Check what role is assigned to an account in the database</p>
+        
+        <div class="quick-buttons">
+            <button class="quick-btn" onclick="checkQuick('valjeremy@grc.edu.ph')">Check Validator</button>
+            <button class="quick-btn" onclick="checkQuick('adminjeremy@grc.edu.ph')">Check Admin</button>
+            <button class="quick-btn" onclick="checkQuick('schojeremy@grc.edu.ph')">Check Scholar</button>
+        </div>
+        
+        <div class="input-group">
+            <label>Email Address:</label>
+            <input type="email" id="emailInput" placeholder="example@grc.edu.ph">
+        </div>
+        
+        <button id="checkBtn" onclick="checkRole()">Check Role in Database</button>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "316123000523",
+            appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+            measurementId: "G-QW1PMQZMSZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        window.db = db;
+
+        async function checkRole() {
+            const email = document.getElementById('emailInput').value.trim();
+            const resultDiv = document.getElementById('result');
+            const btn = document.getElementById('checkBtn');
+            
+            if (!email) {
+                resultDiv.className = 'result show error';
+                resultDiv.innerHTML = '<h3>❌ Error</h3><p>Please enter an email address</p>';
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.textContent = 'Checking...';
+            resultDiv.className = 'result';
+            resultDiv.innerHTML = '';
+            
+            try {
+                console.log('Searching for email:', email);
+                
+                // Query Firestore for user with this email
+                const usersRef = collection(db, 'users');
+                const q = query(usersRef, where('email', '==', email));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    resultDiv.className = 'result show error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Account Not Found</h3>
+                        <p>No account found with email: <strong>${email}</strong></p>
+                        <p style="margin-top: 10px; font-size: 14px;">
+                            💡 Make sure you've run <code>scripts/setup-test-accounts.html</code> first!
+                        </p>
+                    `;
+                } else {
+                    const userData = querySnapshot.docs[0].data();
+                    const role = userData.role || 'NOT SET';
+                    
+                    console.log('Found user:', userData);
+                    
+                    let roleClass = '';
+                    if (role === 'admin' || role === 'administrator') roleClass = 'role-admin';
+                    else if (role === 'validator' || role === 'reviewer') roleClass = 'role-validator';
+                    else if (role === 'scholar') roleClass = 'role-scholar';
+                    
+                    let expectedDashboard = '';
+                    if (role === 'admin' || role === 'administrator') {
+                        expectedDashboard = 'admin.html';
+                    } else if (role === 'validator' || role === 'reviewer') {
+                        expectedDashboard = 'validator.html';
+                    } else if (role === 'scholar') {
+                        expectedDashboard = 'scholar-dashboard.html';
+                    } else {
+                        expectedDashboard = 'UNKNOWN - May not work!';
+                    }
+                    
+                    resultDiv.className = 'result show success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Account Found</h3>
+                        <div class="info-row">
+                            <span class="info-label">Email:</span>
+                            <span class="info-value">${userData.email}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Name:</span>
+                            <span class="info-value">${userData.fullName || userData.name || 'N/A'}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Role in Database:</span>
+                            <span class="role-badge ${roleClass}">${role}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Should Go To:</span>
+                            <span class="info-value">${expectedDashboard}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">UID:</span>
+                            <span class="info-value" style="font-size: 11px;">${querySnapshot.docs[0].id}</span>
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.className = 'result show error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Error</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+            
+            btn.disabled = false;
+            btn.textContent = 'Check Role in Database';
+        }
+
+        window.checkRole = checkRole;
+
+        function checkQuick(email) {
+            document.getElementById('emailInput').value = email;
+            checkRole();
+        }
+
+        window.checkQuick = checkQuick;
+    </script>
+</body>
+</html>

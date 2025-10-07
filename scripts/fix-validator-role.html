@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Validator Role - Quick Fix</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .warning-box h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .warning-box p {
+            color: #856404;
+            line-height: 1.6;
+        }
+        .fix-btn {
+            width: 100%;
+            padding: 18px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .fix-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+        .fix-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .log {
+            background: #263238;
+            color: #aed581;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+        }
+        .log.show {
+            display: block;
+        }
+        .log-success {
+            color: #4caf50;
+            font-weight: bold;
+        }
+        .log-error {
+            color: #f44336;
+            font-weight: bold;
+        }
+        .log-info {
+            color: #29b6f6;
+        }
+        .log-warning {
+            color: #ff9800;
+        }
+        .accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .account-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            text-align: center;
+        }
+        .account-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .account-card .role {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .role-admin {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+        .role-validator {
+            background: #bbdefb;
+            color: #1976d2;
+        }
+        .role-scholar {
+            background: #e1bee7;
+            color: #7b1fa2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Quick Fix: Validator Role</h1>
+        <p class="subtitle">This will fix the validator account role in the database</p>
+        
+        <div class="warning-box">
+            <h3>⚠️ Problem:</h3>
+            <p>The validator account (<strong>valjeremy@grc.edu.ph</strong>) is going to the scholar dashboard instead of the validator dashboard. This means the role in the database is set to "scholar" instead of "validator".</p>
+        </div>
+        
+        <div class="accounts-grid">
+            <div class="account-card">
+                <h4>👑 Admin</h4>
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">adminjeremy</p>
+                <span class="role role-admin">admin</span>
+            </div>
+            <div class="account-card">
+                <h4>👨‍💼 Validator</h4>
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">valjeremy</p>
+                <span class="role role-validator">validator</span>
+            </div>
+            <div class="account-card">
+                <h4>🎓 Scholar</h4>
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">schojeremy</p>
+                <span class="role role-scholar">scholar</span>
+            </div>
+        </div>
+        
+        <button class="fix-btn" id="fixBtn" onclick="fixAllRoles()">
+            🔧 Fix All Account Roles Now
+        </button>
+        
+        <p style="text-align: center; color: #666; font-size: 13px;">
+            This will update all three accounts with the correct roles
+        </p>
+        
+        <div id="log" class="log"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, query, where, getDocs, doc, updateDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "316123000523",
+            appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+            measurementId: "G-QW1PMQZMSZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        window.db = db;
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            logDiv.classList.add('show');
+            const line = document.createElement('div');
+            line.className = `log-${type}`;
+            line.textContent = message;
+            logDiv.appendChild(line);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        async function fixAccountRole(email, correctRole, displayName) {
+            try {
+                log(`🔍 Looking for account: ${email}`, 'info');
+                
+                // Find user by email
+                const usersRef = collection(db, 'users');
+                const q = query(usersRef, where('email', '==', email));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    log(`❌ Account ${email} NOT FOUND in database!`, 'error');
+                    log(`   💡 You need to create this account first using setup-test-accounts.html`, 'warning');
+                    return false;
+                } else {
+                    const userDoc = querySnapshot.docs[0];
+                    const userData = userDoc.data();
+                    const currentRole = userData.role;
+                    
+                    log(`✅ Found account: ${displayName}`, 'success');
+                    log(`   Current role: "${currentRole}"`, 'info');
+                    
+                    if (currentRole === correctRole) {
+                        log(`   ✅ Role is already correct!`, 'success');
+                        return true;
+                    } else {
+                        log(`   ⚠️  Role is WRONG! Updating...`, 'warning');
+                        
+                        // Update the role
+                        await updateDoc(doc(db, 'users', userDoc.id), {
+                            role: correctRole
+                        });
+                        
+                        log(`   ✅ Updated role from "${currentRole}" to "${correctRole}"`, 'success');
+                        return true;
+                    }
+                }
+            } catch (error) {
+                log(`❌ Error fixing ${email}: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function fixAllRoles() {
+            const btn = document.getElementById('fixBtn');
+            const logDiv = document.getElementById('log');
+            
+            btn.disabled = true;
+            btn.textContent = 'Fixing...';
+            logDiv.innerHTML = '';
+            logDiv.classList.add('show');
+            
+            log('========================================', 'info');
+            log('🔧 STARTING ROLE FIX PROCESS', 'info');
+            log('========================================', 'info');
+            log('', 'info');
+            
+            try {
+                // Fix all three accounts
+                const results = [];
+                
+                results.push(await fixAccountRole('adminjeremy@grc.edu.ph', 'admin', 'Admin Account'));
+                log('', 'info');
+                
+                results.push(await fixAccountRole('valjeremy@grc.edu.ph', 'validator', 'Validator Account'));
+                log('', 'info');
+                
+                results.push(await fixAccountRole('schojeremy@grc.edu.ph', 'scholar', 'Scholar Account'));
+                log('', 'info');
+                
+                log('========================================', 'success');
+                
+                if (results.every(r => r)) {
+                    log('✅ ALL ROLES FIXED SUCCESSFULLY!', 'success');
+                    log('', 'success');
+                    log('🎯 What to do next:', 'info');
+                    log('   1. Go to pages/public/login.html', 'info');
+                    log('   2. Login with: valjeremy / validator123', 'info');
+                    log('   3. You should now go to VALIDATOR DASHBOARD!', 'info');
+                    
+                    btn.textContent = '✅ Fixed Successfully!';
+                    btn.style.background = '#28a745';
+                } else {
+                    log('⚠️  Some accounts may need to be created first', 'warning');
+                    log('   Run scripts/setup-test-accounts.html to create accounts', 'warning');
+                    
+                    btn.disabled = false;
+                    btn.textContent = 'Try Again';
+                }
+                
+                log('========================================', 'success');
+                
+            } catch (error) {
+                log('❌ CRITICAL ERROR: ' + error.message, 'error');
+                btn.disabled = false;
+                btn.textContent = 'Try Again';
+            }
+        }
+
+        window.fixAllRoles = fixAllRoles;
+    </script>
+</body>
+</html>

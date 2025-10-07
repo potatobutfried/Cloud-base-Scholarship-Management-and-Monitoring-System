@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIEW ALL USER ROLES</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 42px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+        .url-box {
+            background: #e3f2fd;
+            border: 3px solid #1976d2;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: left;
+        }
+        .url-box-title {
+            color: #1565c0;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+        .url-input {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            border: 2px solid #1976d2;
+            border-radius: 8px;
+            font-family: monospace;
+            background: white;
+            cursor: pointer;
+        }
+        .url-hint {
+            margin-top: 10px;
+            color: #0d47a1;
+            font-size: 13px;
+        }
+        .check-button {
+            width: 100%;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 30px 0;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        .check-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.6);
+        }
+        .check-button:disabled {
+            background: #bbb;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .users-table {
+            width: 100%;
+            margin: 30px 0;
+            border-collapse: collapse;
+            display: none;
+            text-align: left;
+        }
+        .users-table.show {
+            display: table;
+        }
+        .users-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            font-size: 16px;
+        }
+        .users-table td {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            font-size: 15px;
+        }
+        .users-table tr:hover {
+            background: #f5f5f5;
+        }
+        .role-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .role-admin {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        .role-validator {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+        .role-scholar {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .role-unknown {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .log {
+            background: #1a1a1a;
+            color: #0f0;
+            padding: 30px;
+            border-radius: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            line-height: 2;
+            margin-top: 30px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            text-align: left;
+        }
+        .log.show {
+            display: block;
+        }
+        .log-success { color: #4caf50; font-weight: bold; font-size: 18px; }
+        .log-error { color: #f44336; font-weight: bold; font-size: 18px; }
+        .log-warning { color: #ff9800; font-size: 16px; }
+        .log-info { color: #2196f3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👥 VIEW ALL USERS</h1>
+        <p class="subtitle">Check all user accounts and their roles</p>
+        
+        <div class="url-box">
+            <div class="url-box-title">📋 COPY THIS URL AND PASTE IN BROWSER:</div>
+            <input id="urlToCopy" readonly class="url-input"
+                   value="http://127.0.0.1:5500/scripts/VIEW-ALL-USERS.html"
+                   onclick="this.select(); document.execCommand('copy'); alert('✅ Copied! Now paste it in your browser address bar.');">
+            <div class="url-hint">
+                👆 Click the box above to copy, then paste in your browser address bar and press Enter
+            </div>
+        </div>
+
+        <button class="check-button" id="checkBtn" onclick="checkAllUsers()">
+            👁️ VIEW ALL USER ROLES
+        </button>
+
+        <table class="users-table" id="usersTable">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="usersTableBody">
+            </tbody>
+        </table>
+
+        <div id="log" class="log"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "316123000523",
+            appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+            measurementId: "G-QW1PMQZMSZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            logDiv.classList.add('show');
+            const div = document.createElement('div');
+            div.className = `log-${type}`;
+            div.innerHTML = message;
+            logDiv.appendChild(div);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        window.checkAllUsers = async function() {
+            const btn = document.getElementById('checkBtn');
+            const logDiv = document.getElementById('log');
+            const usersTable = document.getElementById('usersTable');
+            const usersTableBody = document.getElementById('usersTableBody');
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ LOADING...';
+            logDiv.innerHTML = '';
+            logDiv.classList.add('show');
+            usersTableBody.innerHTML = '';
+            usersTable.classList.remove('show');
+            
+            try {
+                log('🔍 Loading all users from Firestore...', 'info');
+                log('', 'info');
+                
+                const querySnapshot = await getDocs(collection(db, 'users'));
+                
+                if (querySnapshot.empty) {
+                    log('⚠️ No users found in database', 'warning');
+                    btn.disabled = false;
+                    btn.textContent = '⚠️ NO USERS FOUND';
+                    return;
+                }
+                
+                log(`✅ Found ${querySnapshot.size} users`, 'success');
+                log('', 'info');
+                
+                let adminCount = 0;
+                let validatorCount = 0;
+                let scholarCount = 0;
+                let unknownCount = 0;
+                
+                querySnapshot.forEach((doc) => {
+                    const userData = doc.data();
+                    const role = userData.role || 'unknown';
+                    
+                    // Count roles
+                    if (role === 'admin' || role === 'administrator') adminCount++;
+                    else if (role === 'validator' || role === 'reviewer') validatorCount++;
+                    else if (role === 'scholar') scholarCount++;
+                    else unknownCount++;
+                    
+                    // Determine role class
+                    let roleClass = 'role-unknown';
+                    if (role === 'admin' || role === 'administrator') roleClass = 'role-admin';
+                    else if (role === 'validator' || role === 'reviewer') roleClass = 'role-validator';
+                    else if (role === 'scholar') roleClass = 'role-scholar';
+                    
+                    // Add row to table
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${userData.email || 'N/A'}</td>
+                        <td>${userData.fullName || userData.name || 'N/A'}</td>
+                        <td><span class="role-badge ${roleClass}">${role}</span></td>
+                        <td>${userData.status || 'N/A'}</td>
+                    `;
+                    usersTableBody.appendChild(row);
+                    
+                    // Log user details
+                    log(`📧 ${userData.email || 'N/A'}`, 'info');
+                    log(`   Name: ${userData.fullName || userData.name || 'N/A'}`, 'info');
+                    log(`   Role: ${role}`, role === 'validator' ? 'success' : 'info');
+                    log(`   Status: ${userData.status || 'N/A'}`, 'info');
+                    log('', 'info');
+                });
+                
+                log('📊 SUMMARY:', 'success');
+                log(`   Admins: ${adminCount}`, 'info');
+                log(`   Validators: ${validatorCount}`, validatorCount > 0 ? 'success' : 'warning');
+                log(`   Scholars: ${scholarCount}`, 'info');
+                if (unknownCount > 0) {
+                    log(`   Unknown roles: ${unknownCount}`, 'warning');
+                }
+                
+                usersTable.classList.add('show');
+                btn.textContent = '✅ LOADED!';
+                btn.disabled = false;
+                
+            } catch (error) {
+                log('', 'error');
+                log('❌ ERROR', 'error');
+                log('Error: ' + error.message, 'error');
+                console.error(error);
+                
+                btn.disabled = false;
+                btn.textContent = '❌ ERROR - TRY AGAIN';
+            }
+        };
+    </script>
+</body>
+</html>

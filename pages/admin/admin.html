@@ -129,6 +129,8 @@
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
             margin-bottom: 3rem;
+            /* center stats by default to match admin layout */
+            justify-items: center;
         }
         
         .stat-card {
@@ -167,6 +169,9 @@
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
             margin-top: 2rem;
+            /* center the grid to match admin layout */
+            justify-content: center;
+            justify-items: center;
         }
         
         .dashboard-card {
@@ -264,6 +269,8 @@
             .dashboard-grid {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
+                /* on small screens keep centered/normal flow */
+                justify-content: center;
             }
             
             .stats-overview {
@@ -366,37 +373,7 @@
             <p class="welcome-subtitle">Manage your scholarship program efficiently</p>
         </div>
         
-        <!-- Statistics Overview -->
-        <div class="stats-overview">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="stat-number" id="totalStudents">0</div>
-                <div class="stat-label">Total Students</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-user-check"></i>
-                </div>
-                <div class="stat-number" id="activeScholars">0</div>
-                <div class="stat-label">Active Scholars</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <div class="stat-number" id="pendingApplications">0</div>
-                <div class="stat-label">Pending Applications</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-building"></i>
-                </div>
-                <div class="stat-number" id="totalDepartments">0</div>
-                <div class="stat-label">Departments</div>
-            </div>
-        </div>
+        <!-- Statistics Overview removed -->
         
         <!-- Dashboard Grid -->
         <div class="dashboard-grid">
@@ -408,7 +385,7 @@
                 <div class="card-description">Create new admin accounts and manage user permissions</div>
             </a>
             
-            <a href="#" onclick="generateReports()" class="dashboard-card card-reports">
+            <a href="reports.html" class="dashboard-card card-reports" title="Generate Reports">
                 <div class="card-icon">
                     <i class="fas fa-chart-bar"></i>
                 </div>
@@ -457,15 +434,9 @@
                 <div class="card-description">Handle scholarship requests and applications</div>
             </a>
             
-            <a href="#" onclick="manageImportantDates()" class="dashboard-card card-dates">
-                <div class="card-icon">
-                    <i class="fas fa-calendar-check"></i>
-                </div>
-                <div class="card-title">Important Dates</div>
-                <div class="card-description">Set and manage key academic dates</div>
-            </a>
+            <!-- Important Dates card removed per request -->
             
-            <a href="#" onclick="manageDepartments()" class="dashboard-card card-department">
+            <a href="department.html" class="dashboard-card card-department" title="Manage Departments">
                 <div class="card-icon">
                     <i class="fas fa-building"></i>
                 </div>
@@ -725,7 +696,8 @@
         
         function manageDepartments() {
             showNotification('Opening departments management...');
-            // Implement departments functionality
+            // Navigate to departments page
+            window.location.href = 'department.html';
         }
         
         function manageScholarSlots() {

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CREATE Validator Account</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+        h1 {
+            color: #45a049;
+            margin-bottom: 15px;
+            font-size: 42px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+        .url-box {
+            background: #e3f2fd;
+            border: 3px solid #1976d2;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: left;
+        }
+        .url-box-title {
+            color: #1565c0;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+        .url-input {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            border: 2px solid #1976d2;
+            border-radius: 8px;
+            font-family: monospace;
+            background: white;
+            cursor: pointer;
+        }
+        .url-hint {
+            margin-top: 10px;
+            color: #0d47a1;
+            font-size: 13px;
+        }
+        .info-box {
+            background: #fff3cd;
+            border: 3px solid #ffc107;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: left;
+        }
+        .info-box h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .info-box p {
+            color: #856404;
+            margin: 5px 0;
+            font-size: 16px;
+        }
+        .create-button {
+            width: 100%;
+            padding: 30px;
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 30px 0;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+        }
+        .create-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(76, 175, 80, 0.6);
+        }
+        .create-button:disabled {
+            background: #bbb;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .log {
+            background: #1a1a1a;
+            color: #0f0;
+            padding: 30px;
+            border-radius: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            line-height: 2;
+            margin-top: 30px;
+            max-height: 500px;
+            overflow-y: auto;
+            display: none;
+            text-align: left;
+        }
+        .log.show {
+            display: block;
+        }
+        .log-success { color: #4caf50; font-weight: bold; font-size: 18px; }
+        .log-error { color: #f44336; font-weight: bold; font-size: 18px; }
+        .log-warning { color: #ff9800; font-size: 16px; }
+        .log-info { color: #2196f3; }
+        .log-header {
+            color: #ffd700;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 20px 0 10px;
+            border-bottom: 3px solid #ffd700;
+            padding-bottom: 10px;
+        }
+        .success-banner {
+            background: #d4edda;
+            border: 4px solid #28a745;
+            padding: 40px;
+            border-radius: 15px;
+            margin-top: 30px;
+            display: none;
+        }
+        .success-banner.show {
+            display: block;
+        }
+        .success-banner h2 {
+            color: #155724;
+            margin-bottom: 20px;
+            font-size: 32px;
+        }
+        .success-banner .steps {
+            text-align: left;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .success-banner .steps li {
+            margin: 15px 0;
+            font-size: 18px;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ CREATE VALIDATOR</h1>
+        <p class="subtitle">Create fresh validator account with correct role</p>
+        
+        <div class="url-box">
+            <div class="url-box-title">📋 COPY THIS URL AND PASTE IN BROWSER:</div>
+            <input id="urlToCopy" readonly class="url-input"
+                   value="http://127.0.0.1:5500/scripts/CREATE-VALIDATOR-ACCOUNT.html"
+                   onclick="this.select(); document.execCommand('copy'); alert('✅ Copied! Now paste it in your browser address bar.');">
+            <div class="url-hint">
+                👆 Click the box above to copy, then paste in your browser address bar and press Enter
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>📝 Account Details:</h3>
+            <p><strong>Email:</strong> valjeremy@grc.edu.ph</p>
+            <p><strong>Password:</strong> validator123</p>
+            <p><strong>Role:</strong> validator ✅</p>
+            <p><strong>Name:</strong> Validator Jeremy</p>
+        </div>
+
+        <button class="create-button" id="createBtn" onclick="createValidator()">
+            ✅ CREATE VALIDATOR ACCOUNT
+        </button>
+
+        <p style="color: #999; font-size: 14px;">
+            This will create a brand new validator account in Firebase
+        </p>
+
+        <div id="log" class="log"></div>
+        
+        <div id="successBanner" class="success-banner">
+            <h2>✅ ACCOUNT CREATED!</h2>
+            <p style="color: #155724; font-size: 18px; margin: 20px 0;">
+                Your validator account is ready!
+            </p>
+            <div class="steps">
+                <h3 style="color: #155724; margin-bottom: 15px;">🎯 Next Steps:</h3>
+                <ol style="margin-left: 20px;">
+                    <li><strong>Close ALL browser tabs</strong></li>
+                    <li><strong>Open pages/public/login.html</strong></li>
+                    <li><strong>Login with:</strong> valjeremy / validator123</li>
+                    <li><strong>You will go to VALIDATOR DASHBOARD!</strong> 🎉</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, doc, setDoc, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "316123000523",
+            appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+            measurementId: "G-QW1PMQZMSZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            logDiv.classList.add('show');
+            const div = document.createElement('div');
+            div.className = `log-${type}`;
+            div.innerHTML = message;
+            logDiv.appendChild(div);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        window.createValidator = async function() {
+            const btn = document.getElementById('createBtn');
+            const logDiv = document.getElementById('log');
+            const successBanner = document.getElementById('successBanner');
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ CREATING...';
+            logDiv.innerHTML = '';
+            logDiv.classList.add('show');
+            successBanner.classList.remove('show');
+            
+            const email = 'valjeremy@grc.edu.ph';
+            const password = 'validator123';
+            const fullName = 'Validator Jeremy';
+            
+            try {
+                log('<div class="log-header">🔍 STEP 1: CHECKING IF ACCOUNT EXISTS</div>', 'header');
+                log('Checking email: ' + email, 'info');
+                log('', 'info');
+                
+                // Check if email already exists in Firestore
+                const usersRef = collection(db, 'users');
+                const q = query(usersRef, where('email', '==', email));
+                const querySnapshot = await getDocs(q);
+                
+                if (!querySnapshot.empty) {
+                    log('⚠️ Account already exists in Firestore!', 'warning');
+                    log('', 'warning');
+                    log('Please delete it first using DELETE-VALJEREMY.html', 'warning');
+                    
+                    btn.disabled = false;
+                    btn.textContent = '⚠️ ACCOUNT ALREADY EXISTS';
+                    return;
+                }
+                
+                log('✅ Email is available!', 'success');
+                log('', 'info');
+                
+                log('<div class="log-header">👤 STEP 2: CREATING FIREBASE AUTH ACCOUNT</div>', 'header');
+                log('Email: ' + email, 'info');
+                log('Password: ' + password, 'info');
+                log('', 'info');
+                
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                log('✅ Firebase Auth account created!', 'success');
+                log('User ID: ' + user.uid, 'info');
+                log('', 'info');
+                
+                log('<div class="log-header">💾 STEP 3: CREATING FIRESTORE USER DOCUMENT</div>', 'header');
+                log('Creating document in users collection...', 'info');
+                log('', 'info');
+                
+                await setDoc(doc(db, 'users', user.uid), {
+                    email: email,
+                    fullName: fullName,
+                    role: 'validator',
+                    status: 'active',
+                    createdAt: new Date().toISOString(),
+                    department: 'Scholarship Office'
+                });
+                
+                log('✅ Firestore document created!', 'success');
+                log('', 'info');
+                log('Document details:', 'info');
+                log('  - Email: ' + email, 'info');
+                log('  - Name: ' + fullName, 'info');
+                log('  - Role: validator ✅', 'success');
+                log('  - Status: active', 'info');
+                log('', 'info');
+                
+                log('✅✅✅ VALIDATOR ACCOUNT CREATED! ✅✅✅', 'success');
+                log('', 'success');
+                log('You can now login with:', 'info');
+                log('Email: valjeremy', 'info');
+                log('Password: validator123', 'info');
+                log('', 'info');
+                log('You will be redirected to VALIDATOR DASHBOARD!', 'success');
+                
+                btn.textContent = '✅ CREATED SUCCESSFULLY!';
+                btn.style.background = 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)';
+                successBanner.classList.add('show');
+                
+            } catch (error) {
+                log('', 'error');
+                log('❌❌❌ ERROR ❌❌❌', 'error');
+                log('', 'error');
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    log('Error: Email already exists in Firebase Auth', 'error');
+                    log('', 'error');
+                    log('SOLUTION: Go to Firebase Console and delete this email from Authentication', 'warning');
+                    log('OR use a different email address', 'warning');
+                } else {
+                    log('Error: ' + error.message, 'error');
+                }
+                
+                console.error(error);
+                
+                btn.disabled = false;
+                btn.textContent = '❌ ERROR - TRY AGAIN';
+            }
+        };
+    </script>
+</body>
+</html>

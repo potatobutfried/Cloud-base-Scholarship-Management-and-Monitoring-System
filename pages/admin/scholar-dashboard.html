@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Scholar Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #4A90E2 0%, #357abd 100%);
+      color: #fff;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(74,144,226,0.3);
+      margin-bottom: 2rem;
+    }
+    
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .header p {
+      margin: 0.5rem 0 0;
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+    
+    .logout-btn {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      padding: 0.65rem 1.5rem;
+      border-radius: 25px;
+      border: 1px solid rgba(255,255,255,0.3);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      transition: all 0.3s;
+      font-size: 0.95rem;
+    }
+    
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-2px);
+    }
+    
+    .profile-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .profile-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 2px solid #f0f4f8;
+    }
+    
+    .profile-header h2 {
+      font-size: 2rem;
+      color: #4A90E2;
+      margin-bottom: 0.5rem;
+    }
+    
+    .profile-header .email {
+      color: #666;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .profile-header .department {
+      color: #888;
+      font-size: 0.9rem;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, #f8fbff 0%, #eef5ff 100%);
+      padding: 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid #e3f2fd;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(74,144,226,0.2);
+    }
+    
+    .stat-card .label {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .stat-card .value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #4A90E2;
+    }
+    
+    .section {
+      background: #fff;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+    
+    .section h3 {
+      color: #4A90E2;
+      margin-bottom: 1.5rem;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .duty-log-item {
+      padding: 1rem;
+      background: #f8fbff;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      border-left: 4px solid #4A90E2;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: #999;
+      font-style: italic;
+    }
+    
+    .message-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .form-group label {
+      font-weight: 600;
+      color: #555;
+      font-size: 0.9rem;
+    }
+    
+    .form-group textarea {
+      padding: 1rem;
+      border-radius: 10px;
+      border: 2px solid #e3f2fd;
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: border-color 0.3s;
+      resize: vertical;
+    }
+    
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #4A90E2;
+    }
+    
+    .form-group input[type="file"] {
+      padding: 0.75rem;
+      border-radius: 10px;
+      border: 2px dashed #e3f2fd;
+      cursor: pointer;
+      transition: border-color 0.3s;
+    }
+    
+    .form-group input[type="file"]:hover {
+      border-color: #4A90E2;
+    }
+    
+    .image-preview {
+      margin-top: 1rem;
+      text-align: center;
+    }
+    
+    .image-preview img {
+      max-width: 200px;
+      border-radius: 12px;
+      border: 2px solid #e3f2fd;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .send-btn {
+      background: linear-gradient(135deg, #4A90E2 0%, #357abd 100%);
+      color: #fff;
+      padding: 1rem 2rem;
+      border-radius: 25px;
+      border: none;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(74,144,226,0.3);
+    }
+    
+    .send-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(74,144,226,0.4);
+    }
+    
+    .send-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .status-message {
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      text-align: center;
+      display: none;
+    }
+    
+    .status-message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      display: block;
+    }
+    
+    .status-message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      display: block;
+    }
+    
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .profile-header h2 {
+        font-size: 1.5rem;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .section {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-top">
+        <div>
+          <h1><i class="fas fa-user-graduate"></i> Scholar Dashboard</h1>
+          <p>Your scholarship overview and communications</p>
+        </div>
+        <a href="../public/login.html" id="logoutLink" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <div class="profile-card">
+      <div class="profile-header">
+        <h2 id="profileName">Loading...</h2>
+        <p class="email" id="profileEmail"></p>
+        <p class="department"><i class="fas fa-building"></i> <span id="profileDept">-</span></p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="label">Duty Hours (This Month)</div>
+          <div class="value" id="dutyHours">0h</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Fellowship Attended</div>
+          <div class="value" id="fellowshipCount">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Absences (This Month)</div>
+          <div class="value" id="absenceCount">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><i class="fas fa-clipboard-list"></i> Recent Duty Logs</h3>
+      <div id="dutyList"></div>
+    </div>
+
+    <div class="section">
+      <h3><i class="fas fa-envelope"></i> Send a Message</h3>
+      <p style="color: #666; margin-bottom: 1.5rem; font-size: 0.9rem;">
+        You can send a message (max 500 characters) and optionally attach one photo (max 2MB, JPG/PNG only).
+      </p>
+      
+      <div class="message-form">
+        <div class="form-group">
+          <label for="msgText"><i class="fas fa-comment"></i> Your Message</label>
+          <textarea id="msgText" placeholder="Write your message here..." rows="5" maxlength="500"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="msgImage"><i class="fas fa-image"></i> Attach Photo (Optional)</label>
+          <input type="file" id="msgImage" accept="image/png,image/jpeg" />
+        </div>
+        
+        <div id="imgPreview" class="image-preview" style="display:none">
+          <img id="imgPreviewImg" src="" alt="Preview" />
+        </div>
+        
+        <div id="msgStatus" class="status-message"></div>
+        
+        <button id="sendMsgBtn" class="send-btn">
+          <i class="fas fa-paper-plane"></i> Send Message
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+  import { getFirestore, collection, getDocs, query, where, orderBy, limit, getDoc, doc, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+  import { getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+      authDomain: "scholarship-cloudbase.firebaseapp.com",
+      projectId: "scholarship-cloudbase",
+      storageBucket: "scholarship-cloudbase.firebasestorage.app",
+      messagingSenderId: "316123000523",
+      appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+    };
+
+  let db, auth, currentUser;
+  try { const app = initializeApp(firebaseConfig); db = getFirestore(app); auth = getAuth(app); console.debug('Firebase ready'); } catch(e){ console.warn('Firebase init failed', e); db=null }
+
+    const profileName = document.getElementById('profileName');
+    const profileEmail = document.getElementById('profileEmail');
+    const profileDept = document.getElementById('profileDept');
+    const dutyHoursEl = document.getElementById('dutyHours');
+    const fellowshipCountEl = document.getElementById('fellowshipCount');
+    const absenceCountEl = document.getElementById('absenceCount');
+    const dutyListEl = document.getElementById('dutyList');
+    const logoutLink = document.getElementById('logoutLink');
+
+    async function init(){
+      let profile = null;
+      try {
+        if (auth && auth.currentUser) {
+          const user = auth.currentUser;
+          currentUser = user;
+          if (db) {
+            const snap = await getDocs(query(collection(db,'users'), where('uid','==', user.uid)));
+            if (!snap.empty) profile = { id: snap.docs[0].id, ...snap.docs[0].data() };
+            else {
+              const snap2 = await getDocs(query(collection(db,'users'), where('email','==', user.email)));
+              if (!snap2.empty) profile = { id: snap2.docs[0].id, ...snap2.docs[0].data() };
+            }
+          }
+          if (!profile) profile = { id: user.uid, fullName: user.displayName || user.email, email: user.email, status: 'scholar' };
+        } else {
+          // no auth available or no user signed in - use demo account for now
+          profile = { id: 'demo', fullName: 'Demo Scholar', email: 'demo@example.com', status: 'scholar' };
+        }
+      } catch(e){ console.warn('profile load failed', e); if (!profile) profile = { id: 'demo', fullName: 'Demo Scholar', email: 'demo@example.com', status: 'scholar' }; }
+
+      // if role exists but is not scholar, just warn but don't redirect during this temporary mode
+      if (profile.role && profile.role !== 'scholar') console.warn('Non-scholar role detected:', profile.role);
+
+      profileName.textContent = profile.fullName || profile.name || 'Scholar';
+      profileEmail.textContent = profile.email || '';
+      const deptName = await resolveDepartment(profile);
+      profileDept.textContent = deptName || 'Unassigned';
+
+      await loadUserRecords(profile.id || (currentUser && currentUser.uid) || 'demo');
+      // keep the header stats updated
+      await loadStats();
+    }
+
+    init();
+
+    logoutLink.addEventListener('click', async (e)=>{
+      e.preventDefault();
+      if (!auth) { window.location.href = '../public/login.html'; return; }
+      try { await signOut(auth); window.location.href = '../public/login.html'; } catch(e){ console.error('logout failed', e); }
+    });
+
+    function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    // load some basic stats for the header cards (departments, totals)
+    async function loadStats(){
+      // safe: check for element existence before writing
+      const setIf = (el, v) => { try { if (el) el.textContent = v } catch(_){} };
+      if (db) {
+        try { const snap = await getDocs(collection(db,'departments')); setIf(deptEl, snap.size); } catch(e){ setIf(deptEl, '0') }
+        try { const us = await getDocs(collection(db,'users')); setIf(totalEl, us.size); } catch(e){ setIf(totalEl, '0') }
+        try { const as = await getDocs(query(collection(db,'users'), where('status','==','active'))); setIf(activeEl, as.size); } catch(e){ setIf(activeEl, '0') }
+        try { const ps = await getDocs(query(collection(db,'users'), where('status','==','pending'))); setIf(pendingEl, ps.size); } catch(e){ setIf(pendingEl, '0') }
+      } else {
+        setIf(deptEl, '0'); setIf(totalEl, '0'); setIf(activeEl, '0'); setIf(pendingEl, '0');
+      }
+    }
+
+    async function loadUserRecords(userId){
+      // fetch recent duty logs, fellowship attendance and absences for the given userId
+      dutyListEl.textContent = 'Loading...';
+      dutyHoursEl.textContent = '0h'; fellowshipCountEl.textContent = '0'; absenceCountEl.textContent = '0';
+      try {
+        let dutyLogs = [], fellow = [], abs = [];
+        if (db) {
+          try {
+            const dq = query(collection(db,'duty_logs'), where('userId','==',userId), orderBy('date','desc'), limit(20));
+            const ds = await getDocs(dq); ds.forEach(d=> dutyLogs.push(d.data()));
+          } catch(e){ console.warn('duty_logs fetch failed', e) }
+          try { const fq = query(collection(db,'fellowship_attendance'), where('userId','==',userId)); const fs = await getDocs(fq); fs.forEach(d=> fellow.push(d.data())); } catch(e){}
+          try { const aq = query(collection(db,'absences'), where('userId','==',userId)); const asnap = await getDocs(aq); asnap.forEach(d=> abs.push(d.data())); } catch(e){}
+        } else {
+          dutyLogs = [ { date: new Date().toISOString(), hours: 3, note:'Demo Duty' } ]; fellow = []; abs = [];
+        }
+        const hours = dutyLogs.reduce((s,it)=> s + (parseFloat(it.hours)||0), 0);
+        dutyHoursEl.textContent = `${hours}h`;
+        fellowshipCountEl.textContent = fellow.length;
+        absenceCountEl.textContent = abs.length;
+
+        dutyListEl.innerHTML = '';
+        if (!dutyLogs.length) dutyListEl.textContent = 'No duty logs';
+        else dutyLogs.forEach(d=>{
+          const div = document.createElement('div'); div.className='small'; div.textContent = `${d.date ? new Date(d.date).toLocaleString() : ''} – ${d.hours||0}h – ${d.note||''}`; dutyListEl.appendChild(div);
+        });
+      } catch(e){ console.error(e); dutyListEl.textContent = 'Failed to load records'; }
+    }
+
+    async function resolveDepartment(user){
+      // try common user fields first
+      if (user.department) return user.department;
+      if (user.departmentName) return user.departmentName;
+      if (user.dept) return user.dept;
+      if (user.departmentId) {
+        // try to fetch department doc
+        if (db) {
+          try {
+            const dref = doc(db, 'departments', user.departmentId);
+            const d = await getDoc(dref);
+            if (d && d.exists()) return d.data().name || d.id;
+          } catch(e){ console.warn('dept fetch failed', e); }
+        }
+        return user.departmentId;
+      }
+
+      // fallback: try assignments collection
+      if (db) {
+        try {
+          const aq = query(collection(db,'assignments'), where('userId','==',user.id), limit(1));
+          const asnap = await getDocs(aq);
+          if (!asnap.empty) {
+            const ad = asnap.docs[0].data();
+            return ad.departmentName || ad.department || ad.departmentId || 'Unassigned';
+          }
+        } catch(e){ console.warn('assignments lookup failed', e); }
+      }
+
+      return 'Unassigned';
+    }
+    // message/photo UI handlers
+    const msgText = document.getElementById('msgText');
+    const msgImage = document.getElementById('msgImage');
+    const imgPreview = document.getElementById('imgPreview');
+    const imgPreviewImg = document.getElementById('imgPreviewImg');
+    const sendMsgBtn = document.getElementById('sendMsgBtn');
+    const msgStatus = document.getElementById('msgStatus');
+
+    let selectedImageBase64 = null;
+
+    msgImage.addEventListener('change', async (e)=>{
+      const f = e.target.files && e.target.files[0];
+      msgStatus.textContent = '';
+      if (!f) { imgPreview.style.display='none'; selectedImageBase64=null; return; }
+      if (!/^image\/(png|jpeg|jpg)$/.test(f.type)) { msgStatus.textContent='Only JPG/PNG images allowed'; msgImage.value = ''; return; }
+      if (f.size > 2 * 1024 * 1024) { msgStatus.textContent='Image too large (max 2MB)'; msgImage.value = ''; return; }
+      // preview
+      const reader = new FileReader();
+      reader.onload = ()=>{
+        imgPreviewImg.src = reader.result;
+        imgPreview.style.display = 'block';
+        selectedImageBase64 = reader.result; // data:<type>;base64,...
+      };
+      reader.readAsDataURL(f);
+    });
+
+    sendMsgBtn.addEventListener('click', async (e)=>{
+      e.preventDefault();
+      msgStatus.style.color='#556';
+      msgStatus.textContent = 'Sending...';
+      const text = (msgText.value||'').trim();
+      if (!text && !selectedImageBase64) { msgStatus.textContent='Message or image required'; msgStatus.style.color='crimson'; return; }
+      if (text.length > 500) { msgStatus.textContent='Message too long (max 500 chars)'; msgStatus.style.color='crimson'; return; }
+
+      const payload = { message: text, createdAt: serverTimestamp(), userId: (currentUser && currentUser.uid) || 'demo' };
+      if (selectedImageBase64) payload.image = selectedImageBase64;
+
+      try {
+        if (db) {
+          await addDoc(collection(db,'scholar_messages'), payload);
+          msgStatus.style.color='green'; msgStatus.textContent='Message sent';
+          msgText.value = ''; msgImage.value=''; imgPreview.style.display='none'; selectedImageBase64=null;
+        } else {
+          // fallback: store to localStorage queue
+          const q = JSON.parse(localStorage.getItem('scholar_messages')||'[]'); q.push({ ...payload, createdAt: new Date().toISOString() }); localStorage.setItem('scholar_messages', JSON.stringify(q));
+          msgStatus.style.color='green'; msgStatus.textContent='Message saved locally (no DB)';
+        }
+      } catch(err){ console.error(err); msgStatus.style.color='crimson'; msgStatus.textContent='Failed to send message'; }
+    });
+
+  // no search or list on scholar-only view; just load stats
+  loadStats();
+  </script>
+</body>
+</html>

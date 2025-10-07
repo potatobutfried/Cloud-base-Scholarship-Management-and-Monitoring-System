@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validator Dashboard | Scholarship Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #e3f2fd;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon {
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .header-text h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .header-text p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.15);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 4px solid #1976d2;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+
+        .stat-card.total { border-left-color: #1976d2; }
+        .stat-card.pending { border-left-color: #ff9800; }
+        .stat-card.approved { border-left-color: #4caf50; }
+        .stat-card.rejected { border-left-color: #f44336; }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .stat-icon.blue { background: #e3f2fd; color: #1976d2; }
+        .stat-icon.orange { background: #fff3e0; color: #ff9800; }
+        .stat-icon.green { background: #e8f5e9; color: #4caf50; }
+        .stat-icon.red { background: #ffebee; color: #f44336; }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        /* Applications Section */
+        .applications-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .applications-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            min-height: 400px;
+        }
+
+        .documents-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .panel-header {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #999;
+        }
+
+        .loading-icon {
+            font-size: 4rem;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-subtext {
+            font-size: 0.9rem;
+            color: #bbb;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+        }
+
+        /* Application Card */
+        .application-card {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .application-card:hover {
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transform: translateX(4px);
+        }
+
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .app-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .app-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending { background: #fff3e0; color: #f57c00; }
+        .status-approved { background: #e8f5e9; color: #2e7d32; }
+        .status-rejected { background: #ffebee; color: #c62828; }
+
+        .app-details {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .applications-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="header-icon">
+                <i class="fas fa-clipboard-check"></i>
+            </div>
+            <div class="header-text">
+                <h1>Validator Dashboard</h1>
+                <p>Review and validate scholarship applications</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <i class="fas fa-user-shield"></i>
+                <span id="validatorName">Validator User</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card total" onclick="filterApplications('all')">
+                <div class="stat-header">
+                    <span class="stat-title">Total Applications</span>
+                    <div class="stat-icon blue">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                </div>
+                <div class="stat-number" id="totalCount">0</div>
+                <div class="stat-label">Applications received</div>
+            </div>
+
+            <div class="stat-card pending" onclick="filterApplications('pending')">
+                <div class="stat-header">
+                    <span class="stat-title">Pending Review</span>
+                    <div class="stat-icon orange">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+                <div class="stat-number" id="pendingCount">0</div>
+                <div class="stat-label">Awaiting validation</div>
+            </div>
+
+            <div class="stat-card approved" onclick="filterApplications('approved')">
+                <div class="stat-header">
+                    <span class="stat-title">Approved</span>
+                    <div class="stat-icon green">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-number" id="approvedCount">0</div>
+                <div class="stat-label">Successfully validated</div>
+            </div>
+
+            <div class="stat-card rejected" onclick="filterApplications('rejected')">
+                <div class="stat-header">
+                    <span class="stat-title">Rejected</span>
+                    <div class="stat-icon red">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-number" id="rejectedCount">0</div>
+                <div class="stat-label">Did not meet criteria</div>
+            </div>
+        </div>
+
+        <!-- Applications and Documents Section -->
+        <div class="applications-section">
+            <!-- Applications List -->
+            <div class="applications-panel">
+                <div class="loading-state" id="loadingState">
+                    <div class="loading-icon">
+                        <i class="fas fa-inbox"></i>
+                    </div>
+                    <div class="loading-text">Loading Applications...</div>
+                    <div class="loading-subtext">Please wait while we load the applications from the database.</div>
+                </div>
+                <div id="applicationsContainer" style="display: none;"></div>
+            </div>
+
+            <!-- Required Documents -->
+            <div class="documents-panel">
+                <div class="panel-header">
+                    <i class="fas fa-folder-open"></i> Required Documents
+                </div>
+                <div class="empty-state">
+                    <p>Select an application to view documents</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase and Main Script -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, query, where, getDocs, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "316123000523",
+            appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+            measurementId: "G-QW1PMQZMSZ"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Logout function
+        window.logout = async function() {
+            try {
+                console.log('Logging out...');
+                sessionStorage.clear();
+                localStorage.clear();
+                await signOut(auth);
+                window.location.href = '../public/login.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+                window.location.href = '../public/login.html';
+            }
+        };
+
+        // Check authentication
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                document.getElementById('validatorName').textContent = user.email || 'Validator User';
+                await loadApplications();
+            } else {
+                window.location.href = '../public/login.html';
+            }
+        });
+
+        // Load applications from Firestore
+        async function loadApplications() {
+            try {
+                console.log('Loading applications from Firestore...');
+                
+                // Query applications collection
+                const applicationsRef = collection(db, 'scholarship_applications');
+                const q = query(applicationsRef, orderBy('submittedAt', 'desc'));
+                const querySnapshot = await getDocs(q);
+
+                console.log('Found applications:', querySnapshot.size);
+
+                let allApps = [];
+                let pendingCount = 0;
+                let approvedCount = 0;
+                let rejectedCount = 0;
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    allApps.push({ id: doc.id, ...data });
+                    
+                    const status = data.status || 'pending';
+                    if (status === 'pending') pendingCount++;
+                    else if (status === 'approved') approvedCount++;
+                    else if (status === 'rejected') rejectedCount++;
+                });
+
+                // Update statistics
+                document.getElementById('totalCount').textContent = allApps.length;
+                document.getElementById('pendingCount').textContent = pendingCount;
+                document.getElementById('approvedCount').textContent = approvedCount;
+                document.getElementById('rejectedCount').textContent = rejectedCount;
+
+                // Hide loading, show applications
+                document.getElementById('loadingState').style.display = 'none';
+                const container = document.getElementById('applicationsContainer');
+                container.style.display = 'block';
+
+                if (allApps.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><p>No applications found</p></div>';
+                } else {
+                    displayApplications(allApps);
+                }
+
+            } catch (error) {
+                console.error('Error loading applications:', error);
+                document.getElementById('loadingState').innerHTML = `
+                    <div class="loading-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="loading-text">Error loading applications</div>
+                    <div class="loading-subtext">${error.message}</div>
+                `;
+            }
+        }
+
+        // Display applications
+        function displayApplications(apps) {
+            const container = document.getElementById('applicationsContainer');
+            
+            if (apps.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No applications to display</p></div>';
+                return;
+            }
+
+            container.innerHTML = apps.map(app => `
+                <div class="application-card">
+                    <div class="app-header">
+                        <div class="app-name">${app.fullName || 'Unknown Applicant'}</div>
+                        <div class="app-status status-${app.status || 'pending'}">
+                            ${(app.status || 'pending').toUpperCase()}
+                        </div>
+                    </div>
+                    <div class="app-details">
+                        <div><strong>Email:</strong> ${app.email || 'N/A'}</div>
+                        <div><strong>Course:</strong> ${app.course || 'N/A'}</div>
+                        <div><strong>Year Level:</strong> ${app.yearLevel || 'N/A'}</div>
+                        <div><strong>Submitted:</strong> ${app.submittedAt ? new Date(app.submittedAt.toDate()).toLocaleDateString() : 'N/A'}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter applications
+        window.filterApplications = async function(filter) {
+            console.log('Filtering by:', filter);
+            const applicationsRef = collection(db, 'scholarship_applications');
+            
+            let q;
+            if (filter === 'all') {
+                q = query(applicationsRef, orderBy('submittedAt', 'desc'));
+            } else {
+                q = query(applicationsRef, where('status', '==', filter), orderBy('submittedAt', 'desc'));
+            }
+
+            const querySnapshot = await getDocs(q);
+            const apps = [];
+            querySnapshot.forEach((doc) => {
+                apps.push({ id: doc.id, ...doc.data() });
+            });
+
+            displayApplications(apps);
+        };
+    </script>
+</body>
+</html>

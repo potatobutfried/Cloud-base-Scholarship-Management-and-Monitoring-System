@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Test Accounts - Firebase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #4A90E2;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .info {
+            background: #e3f2fd;
+            border-left: 4px solid #4A90E2;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 5px;
+        }
+        
+        .info h3 {
+            color: #4A90E2;
+            margin-bottom: 0.5rem;
+        }
+        
+        .account-box {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .account-box h4 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .account-details {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.8;
+        }
+        
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(74, 144, 226, 0.3);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .log {
+            background: #263238;
+            color: #aed581;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .log.active {
+            display: block;
+        }
+        
+        .log-entry {
+            margin: 0.25rem 0;
+        }
+        
+        .success {
+            color: #aed581;
+        }
+        
+        .error {
+            color: #ef5350;
+        }
+        
+        .warning {
+            color: #ffb74d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Setup Test Accounts</h1>
+        
+        <div class="info">
+            <h3>📋 What This Does</h3>
+            <p>This script will create three test accounts in Firebase Authentication and Firestore:</p>
+        </div>
+        
+        <div class="account-box">
+            <h4>👑 Admin Account</h4>
+            <div class="account-details">
+                Email: adminjeremy@grc.edu.ph<br>
+                Password: admin123<br>
+                Role: admin<br>
+                Full Name: Jeremy Admin
+            </div>
+        </div>
+        
+        <div class="account-box">
+            <h4>👨‍💼 Validator Account</h4>
+            <div class="account-details">
+                Email: valjeremy@grc.edu.ph<br>
+                Password: validator123<br>
+                Role: validator<br>
+                Full Name: Jeremy Validator
+            </div>
+        </div>
+        
+        <div class="account-box">
+            <h4>🎓 Scholar Account</h4>
+            <div class="account-details">
+                Email: schojeremy@grc.edu.ph<br>
+                Password: scholar123<br>
+                Role: scholar<br>
+                Full Name: Jeremy Scholar
+            </div>
+        </div>
+        
+        <button id="setupBtn">Create Test Accounts</button>
+        
+        <div class="log" id="log"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signOut
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc,
+            serverTimestamp
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "316123000523",
+            appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const setupBtn = document.getElementById('setupBtn');
+        const logDiv = document.getElementById('log');
+
+        function log(message, type = 'success') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.classList.add('active');
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        async function createAccount(email, password, userData) {
+            try {
+                log(`Creating account for ${email}...`, 'warning');
+                
+                // Create Firebase Auth user
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                log(`✓ Auth account created (UID: ${user.uid})`, 'success');
+                
+                // Create Firestore user document
+                const userDoc = {
+                    uid: user.uid,
+                    email: email,
+                    fullName: userData.fullName,
+                    name: userData.fullName,
+                    role: userData.role,
+                    status: 'active',
+                    createdAt: serverTimestamp(),
+                    ...userData.extraFields
+                };
+                
+                await setDoc(doc(db, 'users', user.uid), userDoc);
+                log(`✓ Firestore document created for ${userData.fullName}`, 'success');
+                
+                // Sign out after creating
+                await signOut(auth);
+                
+                return { success: true, uid: user.uid };
+            } catch (error) {
+                if (error.code === 'auth/email-already-in-use') {
+                    log(`⚠ Account ${email} already exists - skipping`, 'warning');
+                    return { success: false, alreadyExists: true };
+                } else {
+                    log(`✗ Error creating ${email}: ${error.message}`, 'error');
+                    throw error;
+                }
+            }
+        }
+
+        setupBtn.addEventListener('click', async () => {
+            setupBtn.disabled = true;
+            setupBtn.textContent = 'Creating Accounts...';
+            logDiv.innerHTML = '';
+            
+            try {
+                log('Starting account setup process...', 'warning');
+                
+                // Create admin account
+                await createAccount(
+                    'adminjeremy@grc.edu.ph',
+                    'admin123',
+                    {
+                        fullName: 'Jeremy Admin',
+                        role: 'admin',
+                        extraFields: {
+                            department: 'Administration',
+                            position: 'System Administrator'
+                        }
+                    }
+                );
+                
+                // Create validator account
+                await createAccount(
+                    'valjeremy@grc.edu.ph',
+                    'validator123',
+                    {
+                        fullName: 'Jeremy Validator',
+                        role: 'validator',
+                        extraFields: {
+                            department: 'Validation Office',
+                            position: 'Application Validator'
+                        }
+                    }
+                );
+                
+                // Create scholar account
+                await createAccount(
+                    'schojeremy@grc.edu.ph',
+                    'scholar123',
+                    {
+                        fullName: 'Jeremy Scholar',
+                        role: 'scholar',
+                        extraFields: {
+                            course: 'BSIT',
+                            yearLevel: '3',
+                            department: 'IT Department'
+                        }
+                    }
+                );
+                
+                log('====================================', 'success');
+                log('✓ Setup Complete!', 'success');
+                log('You can now use these credentials to test the login system.', 'success');
+                log('====================================', 'success');
+                
+                setupBtn.textContent = 'Setup Complete ✓';
+                setupBtn.style.background = '#4caf50';
+                
+            } catch (error) {
+                log(`✗ Setup failed: ${error.message}`, 'error');
+                setupBtn.disabled = false;
+                setupBtn.textContent = 'Try Again';
+            }
+        });
+    </script>
+</body>
+</html>

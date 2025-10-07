@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIX VALIDATOR - Complete Solution</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 42px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 18px;
+            text-align: center;
+        }
+        .url-box {
+            background: #e3f2fd;
+            border: 3px solid #1976d2;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        .url-box-title {
+            color: #1565c0;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+        .url-input {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            border: 2px solid #1976d2;
+            border-radius: 8px;
+            font-family: monospace;
+            background: white;
+            cursor: pointer;
+        }
+        .url-hint {
+            margin-top: 10px;
+            color: #0d47a1;
+            font-size: 13px;
+        }
+        .step {
+            background: #f5f5f5;
+            border-left: 5px solid #667eea;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 10px;
+        }
+        .step h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .action-btn {
+            width: 100%;
+            padding: 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 15px 0;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .btn-view {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-delete {
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+            color: white;
+        }
+        .btn-create {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+        }
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .action-btn:disabled {
+            background: #bbb;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .result-box {
+            background: #1a1a1a;
+            color: #0f0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+        .result-box.show {
+            display: block;
+        }
+        .success-box {
+            background: #d4edda;
+            border: 3px solid #28a745;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+        .success-box.show {
+            display: block;
+        }
+        .success-box h3 {
+            color: #155724;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        .success-box ol {
+            margin-left: 20px;
+            color: #155724;
+        }
+        .success-box li {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .info-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 5px;
+        }
+        .badge-admin { background: #e3f2fd; color: #1565c0; }
+        .badge-validator { background: #f3e5f5; color: #7b1fa2; }
+        .badge-scholar { background: #e8f5e9; color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 FIX VALIDATOR ACCOUNT</h1>
+        <p class="subtitle">Complete solution to fix your validator login</p>
+        
+        <div class="url-box">
+            <div class="url-box-title">📋 COPY THIS URL AND PASTE IN BROWSER:</div>
+            <input readonly class="url-input"
+                   value="http://127.0.0.1:5500/scripts/FIX-VALIDATOR-COMPLETE.html"
+                   onclick="this.select(); document.execCommand('copy'); alert('✅ Copied! Paste in browser address bar.');">
+            <div class="url-hint">
+                👆 Click the box to copy, then paste in your browser and press Enter
+            </div>
+        </div>
+
+        <!-- STEP 1: VIEW USERS -->
+        <div class="step">
+            <h2><span class="step-number">1</span> View All Users</h2>
+            <p style="margin-bottom: 20px; font-size: 16px; color: #555;">
+                First, let's check all user accounts and their current roles in your Firebase database.
+            </p>
+            <button class="action-btn btn-view" id="viewBtn" onclick="viewAllUsers()">
+                👁️ VIEW ALL USER ROLES
+            </button>
+            <div id="viewResult" class="result-box"></div>
+        </div>
+
+        <!-- STEP 2: DELETE VALJEREMY -->
+        <div class="step">
+            <h2><span class="step-number">2</span> Delete Broken Validator</h2>
+            <p style="margin-bottom: 20px; font-size: 16px; color: #555;">
+                Delete the corrupted <strong>valjeremy@grc.edu.ph</strong> account from Firestore.
+            </p>
+            <button class="action-btn btn-delete" id="deleteBtn" onclick="deleteValjeremy()">
+                🗑️ DELETE VALJEREMY ACCOUNT
+            </button>
+            <div id="deleteResult" class="result-box"></div>
+        </div>
+
+        <!-- STEP 3: CREATE NEW VALIDATOR -->
+        <div class="step">
+            <h2><span class="step-number">3</span> Create Fresh Validator</h2>
+            <p style="margin-bottom: 20px; font-size: 16px; color: #555;">
+                Create a brand new validator account with the correct role.
+            </p>
+            <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                <strong>New Account Details:</strong><br>
+                Email: <code>valjeremy@grc.edu.ph</code><br>
+                Password: <code>validator123</code><br>
+                Role: <span class="info-badge badge-validator">validator</span>
+            </div>
+            <button class="action-btn btn-create" id="createBtn" onclick="createValidator()">
+                ✅ CREATE VALIDATOR ACCOUNT
+            </button>
+            <div id="createResult" class="result-box"></div>
+            <div id="successBox" class="success-box">
+                <h3>✅ VALIDATOR ACCOUNT CREATED!</h3>
+                <p style="color: #155724; font-size: 18px; margin: 15px 0;">
+                    Your validator account is ready to use!
+                </p>
+                <ol>
+                    <li><strong>Close ALL browser tabs</strong></li>
+                    <li><strong>Open:</strong> pages/public/login.html</li>
+                    <li><strong>Login:</strong> valjeremy / validator123</li>
+                    <li><strong>Result:</strong> You will go to VALIDATOR DASHBOARD! 🎉</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, getDocs, query, where, doc, setDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "316123000523",
+            appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+            measurementId: "G-QW1PMQZMSZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        function log(resultId, message, color = '#0f0') {
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.classList.add('show');
+            const div = document.createElement('div');
+            div.style.color = color;
+            div.innerHTML = message;
+            resultDiv.appendChild(div);
+            resultDiv.scrollTop = resultDiv.scrollHeight;
+        }
+
+        // STEP 1: VIEW ALL USERS
+        window.viewAllUsers = async function() {
+            const btn = document.getElementById('viewBtn');
+            const resultDiv = document.getElementById('viewResult');
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ LOADING...';
+            resultDiv.innerHTML = '';
+            resultDiv.classList.add('show');
+            
+            try {
+                log('viewResult', '🔍 Loading all users from Firestore...', '#2196f3');
+                log('viewResult', '');
+                
+                const querySnapshot = await getDocs(collection(db, 'users'));
+                
+                if (querySnapshot.empty) {
+                    log('viewResult', '⚠️ No users found', '#ff9800');
+                    btn.disabled = false;
+                    btn.textContent = '⚠️ NO USERS';
+                    return;
+                }
+                
+                log('viewResult', `✅ Found ${querySnapshot.size} users:`, '#4caf50');
+                log('viewResult', '');
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    log('viewResult', `📧 ${data.email || 'N/A'}`, '#fff');
+                    log('viewResult', `   Name: ${data.fullName || data.name || 'N/A'}`, '#aaa');
+                    log('viewResult', `   Role: ${data.role || 'unknown'}`, data.role === 'validator' ? '#4caf50' : '#2196f3');
+                    log('viewResult', '');
+                });
+                
+                btn.textContent = '✅ LOADED';
+                btn.disabled = false;
+                
+            } catch (error) {
+                log('viewResult', '❌ ERROR: ' + error.message, '#f44336');
+                btn.disabled = false;
+                btn.textContent = '❌ ERROR';
+            }
+        };
+
+        // STEP 2: DELETE VALJEREMY
+        window.deleteValjeremy = async function() {
+            const btn = document.getElementById('deleteBtn');
+            const resultDiv = document.getElementById('deleteResult');
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ DELETING...';
+            resultDiv.innerHTML = '';
+            resultDiv.classList.add('show');
+            
+            const email = 'valjeremy@grc.edu.ph';
+            
+            try {
+                log('deleteResult', '🔍 Searching for: ' + email, '#2196f3');
+                log('deleteResult', '');
+                
+                const q = query(collection(db, 'users'), where('email', '==', email));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    log('deleteResult', '⚠️ Account not found (already deleted or never existed)', '#ff9800');
+                    btn.disabled = false;
+                    btn.textContent = '⚠️ NOT FOUND';
+                    return;
+                }
+                
+                const userDoc = querySnapshot.docs[0];
+                const userData = userDoc.data();
+                
+                log('deleteResult', '✅ Found account:', '#4caf50');
+                log('deleteResult', `   Email: ${email}`, '#fff');
+                log('deleteResult', `   Name: ${userData.fullName || userData.name}`, '#fff');
+                log('deleteResult', `   Role: ${userData.role}`, '#ff9800');
+                log('deleteResult', '');
+                log('deleteResult', '🗑️ Deleting...', '#f44336');
+                
+                await deleteDoc(doc(db, 'users', userDoc.id));
+                
+                log('deleteResult', '');
+                log('deleteResult', '✅✅✅ DELETED SUCCESSFULLY! ✅✅✅', '#4caf50');
+                log('deleteResult', 'Account removed from database!', '#4caf50');
+                
+                btn.textContent = '✅ DELETED';
+                
+            } catch (error) {
+                log('deleteResult', '❌ ERROR: ' + error.message, '#f44336');
+                btn.disabled = false;
+                btn.textContent = '❌ ERROR';
+            }
+        };
+
+        // STEP 3: CREATE VALIDATOR
+        window.createValidator = async function() {
+            const btn = document.getElementById('createBtn');
+            const resultDiv = document.getElementById('createResult');
+            const successBox = document.getElementById('successBox');
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ CREATING...';
+            resultDiv.innerHTML = '';
+            resultDiv.classList.add('show');
+            successBox.classList.remove('show');
+            
+            const email = 'valjeremy@grc.edu.ph';
+            const password = 'validator123';
+            
+            try {
+                log('createResult', '🔍 Checking if account exists...', '#2196f3');
+                
+                const q = query(collection(db, 'users'), where('email', '==', email));
+                const querySnapshot = await getDocs(q);
+                
+                if (!querySnapshot.empty) {
+                    log('createResult', '⚠️ Account already exists!', '#ff9800');
+                    log('createResult', 'Please delete it first (Step 2)', '#ff9800');
+                    btn.disabled = false;
+                    btn.textContent = '⚠️ ALREADY EXISTS';
+                    return;
+                }
+                
+                log('createResult', '✅ Email available', '#4caf50');
+                log('createResult', '');
+                log('createResult', '👤 Creating Firebase Auth account...', '#2196f3');
+                
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                log('createResult', '✅ Auth account created', '#4caf50');
+                log('createResult', `   UID: ${user.uid}`, '#aaa');
+                log('createResult', '');
+                log('createResult', '💾 Creating Firestore document...', '#2196f3');
+                
+                await setDoc(doc(db, 'users', user.uid), {
+                    email: email,
+                    fullName: 'Validator Jeremy',
+                    role: 'validator',
+                    status: 'active',
+                    createdAt: new Date().toISOString(),
+                    department: 'Scholarship Office'
+                });
+                
+                log('createResult', '✅ Firestore document created', '#4caf50');
+                log('createResult', '   Email: ' + email, '#fff');
+                log('createResult', '   Role: validator ✅', '#4caf50');
+                log('createResult', '');
+                log('createResult', '✅✅✅ VALIDATOR CREATED! ✅✅✅', '#4caf50');
+                
+                btn.textContent = '✅ CREATED!';
+                successBox.classList.add('show');
+                
+            } catch (error) {
+                log('createResult', '❌ ERROR: ' + error.message, '#f44336');
+                if (error.code === 'auth/email-already-in-use') {
+                    log('createResult', '', '#f44336');
+                    log('createResult', '⚠️ Email exists in Firebase Auth', '#ff9800');
+                    log('createResult', 'Go to Firebase Console → Authentication', '#ff9800');
+                    log('createResult', 'Delete valjeremy@grc.edu.ph from there', '#ff9800');
+                }
+                btn.disabled = false;
+                btn.textContent = '❌ ERROR';
+            }
+        };
+    </script>
+</body>
+</html>

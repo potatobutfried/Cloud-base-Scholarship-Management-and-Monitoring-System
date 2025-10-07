@@ -1,0 +1,88 @@
+┌─────────────────────────────────────────────────────────────┐
+│                  🎯 QUICK TEST GUIDE                        │
+│                Three-Role Login System                      │
+└─────────────────────────────────────────────────────────────┘
+
+╔═══════════════════════════════════════════════════════════╗
+║  STEP 1: CREATE ACCOUNTS                                  ║
+╚═══════════════════════════════════════════════════════════╝
+
+📁 Open: scripts/setup-test-accounts.html
+🖱️  Click: "Create Test Accounts" button
+⏱️  Wait: For green checkmarks (should take ~10 seconds)
+
+╔═══════════════════════════════════════════════════════════╗
+║  STEP 2: TEST LOGIN                                       ║
+╚═══════════════════════════════════════════════════════════╝
+
+📁 Open: pages/public/login.html
+
+┌───────────────────────────────────────────────────────────┐
+│  TEST 1: ADMIN ACCOUNT                                    │
+├───────────────────────────────────────────────────────────┤
+│  Username: adminjeremy                                    │
+│  Password: admin123                                       │
+│  Expected: Goes to admin.html ✅                          │
+└───────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────┐
+│  TEST 2: VALIDATOR ACCOUNT                                │
+├───────────────────────────────────────────────────────────┤
+│  Username: valjeremy                                      │
+│  Password: validator123                                   │
+│  Expected: Goes to validator.html ✅                      │
+└───────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────┐
+│  TEST 3: SCHOLAR ACCOUNT                                  │
+├───────────────────────────────────────────────────────────┤
+│  Username: schojeremy                                     │
+│  Password: scholar123                                     │
+│  Expected: Goes to scholar-dashboard.html ✅              │
+└───────────────────────────────────────────────────────────┘
+
+╔═══════════════════════════════════════════════════════════╗
+║  STEP 3: TEST BROWSER BACK BUTTON                         ║
+╚═══════════════════════════════════════════════════════════╝
+
+1. Login as admin → You're at admin.html
+2. Press browser ◄ Back button
+3. Expected: Auto-redirects BACK to admin.html ✅
+   (Prevents logged-in users from seeing login page)
+
+╔═══════════════════════════════════════════════════════════╗
+║  TROUBLESHOOTING                                          ║
+╚═══════════════════════════════════════════════════════════╝
+
+❌ Wrong dashboard?
+   → Open: scripts/debug-user-roles.html
+   → Click: "Check All Users"
+   → Verify: Each account has correct role
+
+❌ "Invalid email or password"?
+   → Re-run: scripts/setup-test-accounts.html
+   → Or use full email: adminjeremy@grc.edu.ph
+
+❌ Still not working?
+   → Check browser console (F12) for errors
+   → Look for red error messages
+
+╔═══════════════════════════════════════════════════════════╗
+║  CORRECT ROUTING                                          ║
+╚═══════════════════════════════════════════════════════════╝
+
+Role: admin        → Dashboard: admin.html
+Role: validator    → Dashboard: validator.html  
+Role: scholar      → Dashboard: scholar-dashboard.html
+
+╔═══════════════════════════════════════════════════════════╗
+║  FILES CHANGED                                            ║
+╚═══════════════════════════════════════════════════════════╝
+
+✓ pages/public/login.html (routing logic fixed)
+✓ scripts/setup-test-accounts.html (added admin account)
+✓ docs/THREE_ROLE_ROUTING_FIX.md (detailed explanation)
+
+═══════════════════════════════════════════════════════════
+                    ALL FIXED! ✅
+═══════════════════════════════════════════════════════════

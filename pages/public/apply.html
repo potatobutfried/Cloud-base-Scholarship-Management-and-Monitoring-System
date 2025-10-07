@@ -512,7 +512,7 @@
         // Import Firebase modules (for Firestore only)
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, collection, addDoc, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, doc, getDoc, setDoc, Timestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
         
         // Import Google Drive service
         import { GoogleDriveService } from '../../config/google-drive-config.js';
@@ -832,10 +832,20 @@
 
                 // Prepare comprehensive application data for guest submission
                 const applicationData = {
+                    // Basic identification
                     applicationId,
                     userId: currentUser ? currentUser.uid : null,
                     guestId: currentUser ? null : guestId,
                     submissionType: currentUser ? 'authenticated' : 'guest',
+                    
+                    // Personal information (for validator dashboard)
+                    fullName: `${form.firstname.value.trim()} ${form.surname.value.trim()}`,
+                    name: `${form.firstname.value.trim()} ${form.surname.value.trim()}`, // Alternative field name
+                    email: form.email.value.trim(),
+                    course: form.course.value,
+                    yearLevel: form.yearLevel.value,
+                    
+                    // Detailed applicant info (preserved for compatibility)
                     applicantInfo: {
                         surname: form.surname.value.trim(),
                         firstname: form.firstname.value.trim(),
@@ -845,13 +855,20 @@
                         yearLevel: parseInt(form.yearLevel.value),
                         course: form.course.value
                     },
+                    
+                    // Document URLs
                     documents: fileUrls,
+                    
+                    // Status - THIS IS CRITICAL FOR VALIDATOR DASHBOARD
+                    status: 'pending',  // Must be lowercase 'pending' for validator filters
+                    
+                    // Detailed status tracking
                     applicationStatus: {
-                        status: 'Pending',
+                        status: 'pending',
                         statusHistory: [
                             {
-                                status: 'Pending',
-                                timestamp: new Date(),
+                                status: 'pending',
+                                timestamp: Timestamp.now(),
                                 updatedBy: 'system',
                                 notes: 'Application submitted'
                             }
@@ -860,10 +877,17 @@
                         reviewedAt: null,
                         reviewNotes: null
                     },
+                    
+                    // Timestamps
+                    createdAt: Timestamp.now(),
+                    submittedAt: Timestamp.now(),
+                    updatedAt: Timestamp.now(),
+                    
+                    // Metadata
                     metadata: {
-                        submittedAt: new Date(),
-                        updatedAt: new Date(),
-                        ipAddress: null, // Could be added with additional setup
+                        submittedAt: Timestamp.now(),
+                        updatedAt: Timestamp.now(),
+                        ipAddress: null,
                         browserInfo: navigator.userAgent,
                         applicationVersion: '1.0'
                     }
@@ -878,8 +902,30 @@
                 let docRef;
                 try {
                     console.log('📤 Attempting to write to collection: scholarship_applications');
+                    
+                    // Save to scholarship_applications collection
                     docRef = await addDoc(collection(db, 'scholarship_applications'), applicationData);
                     console.log('✅ Application submitted successfully with document ID:', docRef.id);
+                    
+                    // Also add to validator/pending subcollection
+                    // Structure: validator (collection) > pending (document) > applications (subcollection) > {docId}
+                    console.log('📤 Adding to validator pending queue...');
+                    
+                    const pendingSubcollectionRef = doc(db, 'validator', 'pending', 'applications', docRef.id);
+                    await setDoc(pendingSubcollectionRef, {
+                        date: Timestamp.now(),
+                        applicationId: applicationId,
+                        scholarshipApplicationRef: docRef.id,
+                        status: 'pending',
+                        fullName: applicationData.fullName,
+                        email: applicationData.email,
+                        course: applicationData.course,
+                        yearLevel: applicationData.yearLevel,
+                        createdAt: Timestamp.now()
+                    });
+                    
+                    console.log('✅ Added to validator pending queue');
+                    
                 } catch (firestoreError) {
                     console.error('❌ Firestore write failed:', firestoreError);
                     console.error('Error code:', firestoreError.code);

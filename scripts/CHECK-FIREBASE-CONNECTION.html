@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHECK Firebase Connection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 1000px;
+            width: 100%;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+        h1 {
+            color: #1565c0;
+            margin-bottom: 15px;
+            font-size: 42px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+        .url-box {
+            background: #e3f2fd;
+            border: 3px solid #1976d2;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: left;
+        }
+        .url-box-title {
+            color: #1565c0;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+        .url-input {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            border: 2px solid #1976d2;
+            border-radius: 8px;
+            font-family: monospace;
+            background: white;
+            cursor: pointer;
+        }
+        .url-hint {
+            margin-top: 10px;
+            color: #0d47a1;
+            font-size: 13px;
+        }
+        .check-button {
+            width: 100%;
+            padding: 30px;
+            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 30px 0;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 8px 20px rgba(25, 118, 210, 0.4);
+        }
+        .check-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(25, 118, 210, 0.6);
+        }
+        .check-button:disabled {
+            background: #bbb;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        .user-card {
+            background: #f5f5f5;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #ccc;
+        }
+        .user-card.admin {
+            border-left-color: #1976d2;
+            background: linear-gradient(135deg, #e3f2fd 0%, #fff 100%);
+        }
+        .user-card.validator {
+            border-left-color: #7b1fa2;
+            background: linear-gradient(135deg, #f3e5f5 0%, #fff 100%);
+        }
+        .user-card.scholar {
+            border-left-color: #388e3c;
+            background: linear-gradient(135deg, #e8f5e9 0%, #fff 100%);
+        }
+        .user-card h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .user-card.admin h3 { color: #1565c0; }
+        .user-card.validator h3 { color: #7b1fa2; }
+        .user-card.scholar h3 { color: #2e7d32; }
+        .user-card p {
+            margin: 8px 0;
+            font-size: 15px;
+            color: #555;
+        }
+        .user-card .label {
+            font-weight: bold;
+            color: #333;
+        }
+        .role-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+        .badge-admin { background: #1976d2; color: white; }
+        .badge-validator { background: #7b1fa2; color: white; }
+        .badge-scholar { background: #388e3c; color: white; }
+        .badge-unknown { background: #f44336; color: white; }
+        .connection-box {
+            background: #fff3cd;
+            border: 3px solid #ffc107;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        .connection-box h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        .connection-box ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+        .connection-box li {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .status-connected {
+            color: #4caf50;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .status-issue {
+            color: #f44336;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .log {
+            background: #1a1a1a;
+            color: #0f0;
+            padding: 30px;
+            border-radius: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            line-height: 2;
+            margin-top: 30px;
+            max-height: 500px;
+            overflow-y: auto;
+            display: none;
+            text-align: left;
+        }
+        .log.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 CHECK FIREBASE CONNECTION</h1>
+        <p class="subtitle">Verify your accounts are connected to Firebase</p>
+        
+        <div class="url-box">
+            <div class="url-box-title">📋 COPY THIS URL AND PASTE IN BROWSER:</div>
+            <input id="urlToCopy" readonly class="url-input"
+                   value="http://127.0.0.1:5500/scripts/CHECK-FIREBASE-CONNECTION.html"
+                   onclick="this.select(); document.execCommand('copy'); alert('✅ Copied! Now paste it in your browser address bar.');">
+            <div class="url-hint">
+                👆 Click the box above to copy, then paste in your browser address bar and press Enter
+            </div>
+        </div>
+
+        <button class="check-button" id="checkBtn" onclick="checkConnection()">
+            🔍 CHECK FIREBASE CONNECTION
+        </button>
+
+        <div id="usersGrid" class="users-grid" style="display: none;"></div>
+        
+        <div id="connectionBox" class="connection-box" style="display: none;">
+            <h3>📊 Connection Status</h3>
+            <div id="connectionStatus"></div>
+        </div>
+
+        <div id="log" class="log"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "316123000523",
+            appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+            measurementId: "G-QW1PMQZMSZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        function log(message, color = '#0f0') {
+            const logDiv = document.getElementById('log');
+            logDiv.classList.add('show');
+            const div = document.createElement('div');
+            div.style.color = color;
+            div.innerHTML = message;
+            logDiv.appendChild(div);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        window.checkConnection = async function() {
+            const btn = document.getElementById('checkBtn');
+            const logDiv = document.getElementById('log');
+            const usersGrid = document.getElementById('usersGrid');
+            const connectionBox = document.getElementById('connectionBox');
+            const connectionStatus = document.getElementById('connectionStatus');
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ CHECKING...';
+            logDiv.innerHTML = '';
+            logDiv.classList.add('show');
+            usersGrid.innerHTML = '';
+            usersGrid.style.display = 'none';
+            connectionBox.style.display = 'none';
+            
+            try {
+                log('🔍 CHECKING FIREBASE CONNECTION...', '#2196f3');
+                log('', '#fff');
+                log('📡 Project: scholarship-cloudbase', '#fff');
+                log('🌐 Region: nam5', '#fff');
+                log('', '#fff');
+                
+                log('📊 Loading users from Firestore...', '#2196f3');
+                log('', '#fff');
+                
+                const querySnapshot = await getDocs(collection(db, 'users'));
+                
+                if (querySnapshot.empty) {
+                    log('⚠️ No users found in database!', '#ff9800');
+                    log('', '#fff');
+                    log('Your database is empty. You need to create accounts.', '#ff9800');
+                    btn.disabled = false;
+                    btn.textContent = '⚠️ NO USERS FOUND';
+                    return;
+                }
+                
+                log(`✅ Found ${querySnapshot.size} users in database`, '#4caf50');
+                log('', '#fff');
+                
+                let adminCount = 0;
+                let validatorCount = 0;
+                let scholarCount = 0;
+                let unknownCount = 0;
+                let hasValjeremy = false;
+                let valjeremyRole = null;
+                
+                const users = [];
+                
+                querySnapshot.forEach((doc) => {
+                    const userData = doc.data();
+                    const role = userData.role || 'unknown';
+                    const email = userData.email || 'N/A';
+                    
+                    users.push({
+                        id: doc.id,
+                        email: email,
+                        name: userData.fullName || userData.name || 'N/A',
+                        role: role,
+                        status: userData.status || 'N/A',
+                        department: userData.department || 'N/A'
+                    });
+                    
+                    // Check if valjeremy exists
+                    if (email === 'valjeremy@grc.edu.ph') {
+                        hasValjeremy = true;
+                        valjeremyRole = role;
+                    }
+                    
+                    // Count roles
+                    if (role === 'admin' || role === 'administrator') adminCount++;
+                    else if (role === 'validator' || role === 'reviewer') validatorCount++;
+                    else if (role === 'scholar') scholarCount++;
+                    else unknownCount++;
+                    
+                    // Log to console
+                    log(`👤 ${email}`, '#fff');
+                    log(`   Name: ${userData.fullName || userData.name || 'N/A'}`, '#aaa');
+                    log(`   Role: ${role}`, role === 'validator' ? '#7b1fa2' : '#2196f3');
+                    log(`   UID: ${doc.id}`, '#666');
+                    log('', '#fff');
+                });
+                
+                // Display user cards
+                usersGrid.style.display = 'grid';
+                users.forEach(user => {
+                    const roleClass = user.role === 'admin' || user.role === 'administrator' ? 'admin' :
+                                     user.role === 'validator' || user.role === 'reviewer' ? 'validator' :
+                                     user.role === 'scholar' ? 'scholar' : '';
+                    
+                    const badgeClass = user.role === 'admin' || user.role === 'administrator' ? 'badge-admin' :
+                                      user.role === 'validator' || user.role === 'reviewer' ? 'badge-validator' :
+                                      user.role === 'scholar' ? 'badge-scholar' : 'badge-unknown';
+                    
+                    const card = document.createElement('div');
+                    card.className = `user-card ${roleClass}`;
+                    card.innerHTML = `
+                        <h3>${user.name}</h3>
+                        <p><span class="label">📧 Email:</span> ${user.email}</p>
+                        <p><span class="label">🆔 UID:</span> ${user.id.substring(0, 12)}...</p>
+                        <p><span class="label">📍 Status:</span> ${user.status}</p>
+                        <span class="role-badge ${badgeClass}">${user.role.toUpperCase()}</span>
+                    `;
+                    usersGrid.appendChild(card);
+                });
+                
+                // Show connection status
+                connectionBox.style.display = 'block';
+                let statusHTML = '';
+                
+                statusHTML += `<p><strong>Total Users:</strong> ${querySnapshot.size}</p>`;
+                statusHTML += `<p>✅ Admins: ${adminCount}</p>`;
+                statusHTML += `<p>✅ Validators: ${validatorCount}</p>`;
+                statusHTML += `<p>✅ Scholars: ${scholarCount}</p>`;
+                if (unknownCount > 0) {
+                    statusHTML += `<p>⚠️ Unknown roles: ${unknownCount}</p>`;
+                }
+                statusHTML += '<br>';
+                
+                // Check valjeremy specifically
+                if (hasValjeremy) {
+                    if (valjeremyRole === 'validator' || valjeremyRole === 'reviewer') {
+                        statusHTML += `<p class="status-connected">✅ valjeremy@grc.edu.ph EXISTS with role: ${valjeremyRole}</p>`;
+                        statusHTML += '<p class="status-connected">✅ CONNECTION IS CORRECT!</p>';
+                        statusHTML += '<br><p><strong>You can login now:</strong></p>';
+                        statusHTML += '<ul>';
+                        statusHTML += '<li>Go to: pages/public/login.html</li>';
+                        statusHTML += '<li>Username: valjeremy</li>';
+                        statusHTML += '<li>Password: validator123</li>';
+                        statusHTML += '<li>You will go to VALIDATOR DASHBOARD ✅</li>';
+                        statusHTML += '</ul>';
+                    } else {
+                        statusHTML += `<p class="status-issue">⚠️ valjeremy@grc.edu.ph EXISTS but role is: ${valjeremyRole}</p>`;
+                        statusHTML += '<p class="status-issue">❌ ROLE IS WRONG! Should be "validator"</p>';
+                        statusHTML += '<br><p><strong>FIX THIS:</strong></p>';
+                        statusHTML += '<ul>';
+                        statusHTML += '<li>Use FIX-VALIDATOR-COMPLETE.html to delete and recreate</li>';
+                        statusHTML += '<li>OR manually change role to "validator" in Firebase Console</li>';
+                        statusHTML += '</ul>';
+                    }
+                } else {
+                    statusHTML += '<p class="status-issue">❌ valjeremy@grc.edu.ph DOES NOT EXIST!</p>';
+                    statusHTML += '<br><p><strong>CREATE IT:</strong></p>';
+                    statusHTML += '<ul>';
+                    statusHTML += '<li>Use FIX-VALIDATOR-COMPLETE.html</li>';
+                    statusHTML += '<li>Click "CREATE VALIDATOR ACCOUNT"</li>';
+                    statusHTML += '<li>This will create valjeremy with role="validator"</li>';
+                    statusHTML += '</ul>';
+                }
+                
+                connectionStatus.innerHTML = statusHTML;
+                
+                log('✅ Connection check complete!', '#4caf50');
+                btn.textContent = '✅ CONNECTION CHECKED';
+                btn.disabled = false;
+                
+            } catch (error) {
+                log('', '#f44336');
+                log('❌❌❌ CONNECTION ERROR ❌❌❌', '#f44336');
+                log('', '#f44336');
+                log('Error: ' + error.message, '#f44336');
+                log('', '#fff');
+                log('🔧 POSSIBLE ISSUES:', '#ff9800');
+                log('1. Firebase config is wrong', '#ff9800');
+                log('2. Firestore rules blocking access', '#ff9800');
+                log('3. Internet connection problem', '#ff9800');
+                log('4. Firebase project not set up correctly', '#ff9800');
+                console.error(error);
+                
+                btn.disabled = false;
+                btn.textContent = '❌ CONNECTION ERROR';
+            }
+        };
+    </script>
+</body>
+</html>

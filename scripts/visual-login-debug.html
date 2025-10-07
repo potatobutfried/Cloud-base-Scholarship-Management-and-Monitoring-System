@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Login - Visual</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .login-box {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .debug-panel {
+            background: #263238;
+            color: #aed581;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            display: none;
+            margin-bottom: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .debug-panel.show {
+            display: block;
+        }
+        .debug-line {
+            margin: 5px 0;
+            padding: 5px;
+        }
+        .debug-header {
+            color: #ffeb3b;
+            font-weight: bold;
+            font-size: 16px;
+            margin: 15px 0 10px 0;
+            border-bottom: 2px solid #ffeb3b;
+            padding-bottom: 5px;
+        }
+        .debug-success {
+            color: #4caf50;
+        }
+        .debug-error {
+            color: #f44336;
+            font-weight: bold;
+        }
+        .debug-warning {
+            color: #ff9800;
+        }
+        .debug-info {
+            color: #29b6f6;
+        }
+        .role-display {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 10px;
+            font-size: 14px;
+        }
+        .role-admin {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+        .role-validator {
+            background: #bbdefb;
+            color: #1976d2;
+        }
+        .role-scholar {
+            background: #e1bee7;
+            color: #7b1fa2;
+        }
+        .quick-test {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .quick-btn {
+            padding: 15px;
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .quick-btn:hover {
+            background: #2196f3;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .quick-btn strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .quick-btn small {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+        .redirect-box {
+            background: #fff3e0;
+            border: 2px solid #ff9800;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        .redirect-box.show {
+            display: block;
+        }
+        .redirect-box h3 {
+            color: #e65100;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐛 Visual Login Debugger</h1>
+        <p class="subtitle">This page will show you exactly what's happening when you login</p>
+        
+        <div class="quick-test">
+            <div class="quick-btn" onclick="quickFill('adminjeremy', 'admin123')">
+                <strong>👑 Admin</strong>
+                <small>adminjeremy / admin123</small>
+            </div>
+            <div class="quick-btn" onclick="quickFill('valjeremy', 'validator123')">
+                <strong>👨‍💼 Validator</strong>
+                <small>valjeremy / validator123</small>
+            </div>
+            <div class="quick-btn" onclick="quickFill('schojeremy', 'scholar123')">
+                <strong>🎓 Scholar</strong>
+                <small>schojeremy / scholar123</small>
+            </div>
+        </div>
+        
+        <div class="login-box">
+            <div class="input-group">
+                <label>Email or Username:</label>
+                <input type="text" id="email" placeholder="valjeremy or valjeremy@grc.edu.ph">
+            </div>
+            <div class="input-group">
+                <label>Password:</label>
+                <input type="password" id="password" placeholder="Enter password">
+            </div>
+            <button id="loginBtn" onclick="debugLogin()">🔍 Test Login & Show Debug Info</button>
+        </div>
+        
+        <div id="debugPanel" class="debug-panel"></div>
+        <div id="redirectBox" class="redirect-box"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "316123000523",
+            appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+            measurementId: "G-QW1PMQZMSZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        window.db = db;
+        window.auth = auth;
+
+        function log(message, type = 'info') {
+            const debugPanel = document.getElementById('debugPanel');
+            const line = document.createElement('div');
+            line.className = `debug-line debug-${type}`;
+            line.textContent = message;
+            debugPanel.appendChild(line);
+            debugPanel.scrollTop = debugPanel.scrollHeight;
+        }
+
+        function logHeader(message) {
+            const debugPanel = document.getElementById('debugPanel');
+            const header = document.createElement('div');
+            header.className = 'debug-header';
+            header.textContent = message;
+            debugPanel.appendChild(header);
+        }
+
+        window.log = log;
+        window.logHeader = logHeader;
+
+        async function debugLogin() {
+            const btn = document.getElementById('loginBtn');
+            const debugPanel = document.getElementById('debugPanel');
+            const redirectBox = document.getElementById('redirectBox');
+            
+            debugPanel.innerHTML = '';
+            debugPanel.classList.add('show');
+            redirectBox.classList.remove('show');
+            
+            let email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                log('❌ Please enter both email and password', 'error');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.textContent = 'Testing...';
+            
+            try {
+                logHeader('🔐 STEP 1: CHECKING EMAIL FORMAT');
+                
+                // Auto-append @grc.edu.ph if needed
+                if (!email.includes('@')) {
+                    log(`📝 Original input: "${email}"`, 'info');
+                    email = email + '@grc.edu.ph';
+                    log(`✅ Auto-completed to: "${email}"`, 'success');
+                } else {
+                    log(`✅ Email format is good: "${email}"`, 'success');
+                }
+                
+                logHeader('🔐 STEP 2: FIREBASE AUTHENTICATION');
+                log('⏳ Attempting to sign in...', 'info');
+                
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                log('✅ Authentication successful!', 'success');
+                log(`   User ID: ${user.uid}`, 'info');
+                log(`   Email: ${user.email}`, 'info');
+                
+                logHeader('🔐 STEP 3: FETCHING USER PROFILE FROM FIRESTORE');
+                log('⏳ Looking up user document in Firestore...', 'info');
+                
+                const userDocRef = doc(db, 'users', user.uid);
+                const userSnapshot = await getDoc(userDocRef);
+                
+                if (userSnapshot.exists()) {
+                    log('✅ User document found in Firestore!', 'success');
+                    
+                    const userData = userSnapshot.data();
+                    const userRole = userData.role || 'NOT SET';
+                    
+                    logHeader('📋 USER DATA FROM DATABASE:');
+                    log(`   Full Name: ${userData.fullName || userData.name || 'N/A'}`, 'info');
+                    log(`   Email: ${userData.email || 'N/A'}`, 'info');
+                    log(`   Role: "${userRole}"`, 'warning');
+                    log(`   Role Type: ${typeof userRole}`, 'info');
+                    log(`   Status: ${userData.status || 'N/A'}`, 'info');
+                    
+                    if (userData.department) {
+                        log(`   Department: ${userData.department}`, 'info');
+                    }
+                    if (userData.position) {
+                        log(`   Position: ${userData.position}`, 'info');
+                    }
+                    if (userData.course) {
+                        log(`   Course: ${userData.course}`, 'info');
+                    }
+                    
+                    logHeader('🎯 STEP 4: DETERMINING DASHBOARD REDIRECT');
+                    
+                    let dashboardUrl = '';
+                    let roleClass = '';
+                    
+                    if (userRole === 'admin' || userRole === 'administrator') {
+                        dashboardUrl = 'pages/admin/admin.html';
+                        roleClass = 'role-admin';
+                        log('✅ Role is ADMIN → Should go to admin.html', 'success');
+                    } else if (userRole === 'validator' || userRole === 'reviewer') {
+                        dashboardUrl = 'pages/admin/validator.html';
+                        roleClass = 'role-validator';
+                        log('✅ Role is VALIDATOR → Should go to validator.html', 'success');
+                    } else if (userRole === 'scholar') {
+                        dashboardUrl = 'pages/admin/scholar-dashboard.html';
+                        roleClass = 'role-scholar';
+                        log('✅ Role is SCHOLAR → Should go to scholar-dashboard.html', 'success');
+                    } else {
+                        dashboardUrl = 'UNKNOWN - ERROR!';
+                        log(`❌ Role "${userRole}" is NOT RECOGNIZED!`, 'error');
+                        log('   Valid roles are: admin, validator, scholar', 'warning');
+                    }
+                    
+                    // Show redirect box
+                    redirectBox.className = 'redirect-box show';
+                    redirectBox.innerHTML = `
+                        <h3>📍 Redirect Information:</h3>
+                        <p><strong>Your Role:</strong> <span class="role-display ${roleClass}">${userRole}</span></p>
+                        <p><strong>Should Redirect To:</strong> <code>${dashboardUrl}</code></p>
+                        <p style="margin-top: 15px; font-size: 14px; color: #666;">
+                            ${userRole === 'validator' ? 
+                                '✅ If this says "validator.html" but you\'re going to scholar dashboard, there\'s a bug in the login page!' :
+                                '✅ This is the correct dashboard for your role.'
+                            }
+                        </p>
+                    `;
+                    
+                    // Sign out
+                    await signOut(auth);
+                    log('🔓 Signed out (for testing purposes)', 'info');
+                    
+                } else {
+                    log('❌ User document NOT FOUND in Firestore!', 'error');
+                    log('   This account exists in Authentication but has no profile.', 'warning');
+                    log('   You need to run scripts/setup-test-accounts.html', 'warning');
+                }
+                
+                logHeader('✅ DEBUG COMPLETE');
+                
+            } catch (error) {
+                logHeader('❌ ERROR OCCURRED');
+                log(`Error Code: ${error.code}`, 'error');
+                log(`Error Message: ${error.message}`, 'error');
+                
+                if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                    log('', 'error');
+                    log('💡 Tip: Check your username and password', 'warning');
+                    log('   Valid accounts: adminjeremy, valjeremy, schojeremy', 'info');
+                } else if (error.code === 'auth/invalid-email') {
+                    log('', 'error');
+                    log('💡 Tip: Email format is invalid', 'warning');
+                }
+            }
+            
+            btn.disabled = false;
+            btn.textContent = '🔍 Test Login & Show Debug Info';
+        }
+
+        window.debugLogin = debugLogin;
+
+        function quickFill(username, password) {
+            document.getElementById('email').value = username;
+            document.getElementById('password').value = password;
+        }
+
+        window.quickFill = quickFill;
+    </script>
+</body>
+</html>

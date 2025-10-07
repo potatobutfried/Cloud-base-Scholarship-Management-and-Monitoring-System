@@ -32,6 +32,7 @@
             padding: 20px;
             margin-bottom: 30px;
             text-align: center;
+            position: relative;
             color: white;
         }
         
@@ -43,6 +44,39 @@
         .header p {
             font-size: 1.1rem;
             opacity: 0.9;
+        }
+        .back-button-wrapper {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .btn-back {
+            /* rounded pill matching UI: light-to-deep blue, subtle border and shadow */
+            background: linear-gradient(180deg, #7ec6fb 0%, #5aa0ee 45%, #4a90e2 100%);
+            color: #ffffff;
+            padding: 8px 22px;
+            border-radius: 24px;
+            font-size: 0.98rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,0.22);
+            box-shadow: 0 6px 18px rgba(58,100,165,0.12), inset 0 1px rgba(255,255,255,0.06);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+        .btn-back i { color: rgba(255,255,255,0.98); }
+        .btn-back:hover {
+            background: linear-gradient(180deg, #88d4ff 0%, #67bdf0 45%, #4f9ee6 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(58,100,165,0.18), inset 0 1px rgba(255,255,255,0.08);
+        }
+        .btn-back:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 10px rgba(58,100,165,0.10), inset 0 1px rgba(255,255,255,0.04);
         }
         
         .dashboard-grid {
@@ -289,6 +323,11 @@
         <div class="header">
             <h1><i class="fas fa-calendar-alt"></i> Set Semester</h1>
             <p>Manage academic semester settings and schedules</p>
+        </div>
+        <div class="back-button-wrapper">
+            <a href="admin.html" class="btn-back back-to-dashboard" id="backToDashboardBtn" title="Back to Dashboard">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
         </div>
         
         <!-- Dashboard Grid -->

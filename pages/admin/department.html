@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Departments - Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    *{box-sizing:border-box}
+    body{font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#eaf5ff 0%,#d7ecff 100%);color:#123;margin:0}
+    .container{max-width:1200px;margin:28px auto;padding:0 20px}
+    .header{background:linear-gradient(135deg,#4A90E2 0%,#357abd 100%);color:#fff;padding:22px;border-radius:12px;position:relative;box-shadow:0 8px 30px rgba(74,144,226,0.18)}
+    .header h1{margin:0;font-size:1.6rem}
+    .header p{margin:6px 0 0;opacity:.95}
+    .back{position:absolute;right:20px;top:50%;transform:translateY(-50%)}
+    .btn-back{background:linear-gradient(180deg,#7ec6fb 0%,#5aa0ee 45%,#4a90e2 100%);color:#fff;padding:8px 18px;border-radius:24px;border:1px solid rgba(255,255,255,0.22);box-shadow:0 6px 18px rgba(58,100,165,0.12);text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-weight:700}
+
+    .card{background:#fff;border-radius:12px;padding:20px;margin-top:18px;box-shadow:0 10px 30px rgba(0,0,0,0.06)}
+    .row{display:flex;gap:12px;align-items:center}
+    label{font-weight:600;color:#234}
+    input, select{padding:10px;border:1px solid #e6eef8;border-radius:8px;background:#fbfdff}
+    .btn-primary{background:#4A90E2;color:#fff;padding:10px 16px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+    .btn-primary:hover{background:#357abd;transform:translateY(-2px)}
+
+    table{width:100%;border-collapse:separate;border-spacing:0;margin-top:14px}
+    thead th{background:#4A90E2;color:#fff;padding:12px;text-align:left;font-weight:700}
+    tbody td{background:#fff;padding:12px;border-bottom:1px solid #eef4fb}
+    tbody tr:last-child td{border-bottom:none}
+    .actions .btn{margin-right:6px}
+    .small{font-size:.92rem;color:#445}
+    @media (max-width:768px){.row{flex-direction:column}.back{position:static;transform:none;margin-top:12px}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-building"></i> Departments & Slots</h1>
+      <p class="small">Create departments and assign available scholar slots per department</p>
+      <div class="back"><a href="admin.html" class="btn-back"><i class="fas fa-arrow-left"></i> Back to Dashboard</a></div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div style="flex:1;min-width:220px">
+          <label for="deptName">Department</label><br>
+          <select id="deptName">
+            <option value="">Select or type new</option>
+            <option value="Clinic">Clinic</option>
+            <option value="IT">IT</option>
+            <option value="Scholar Office">Scholar Office</option>
+            <option value="Guidance">Guidance</option>
+            <option value="Library">Library</option>
+            <option value="RCE">RCE</option>
+            <option value="OSA">OSA</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:160px">
+          <label for="slots">Slots</label><br>
+          <input id="slots" type="number" min="0" value="1">
+        </div>
+        <div style="align-self:flex-end">
+          <button id="addDept" class="btn-primary"><i class="fas fa-plus"></i> Add / Update</button>
+        </div>
+      </div>
+
+      <div id="message" style="margin-top:12px"></div>
+
+      <div id="list" style="margin-top:14px">
+        <table id="deptTable">
+          <thead>
+            <tr><th>Department</th><th>Slots</th><th>Actions</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, addDoc, setDoc, doc, getDocs, deleteDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+      authDomain: "scholarship-cloudbase.firebaseapp.com",
+      projectId: "scholarship-cloudbase",
+      storageBucket: "scholarship-cloudbase.firebasestorage.app",
+      messagingSenderId: "316123000523",
+      appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+    };
+
+    let db;
+    try {
+      const app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      console.debug('Firestore available for departments');
+    } catch (e) {
+      console.warn('Firestore not available, using localStorage fallback', e);
+      db = null;
+    }
+
+    const deptSelect = document.getElementById('deptName');
+    const slotsInput = document.getElementById('slots');
+    const addBtn = document.getElementById('addDept');
+    const tbody = document.querySelector('#deptTable tbody');
+    const message = document.getElementById('message');
+
+    async function loadDepartments() {
+      tbody.innerHTML = '<tr><td colspan="3" class="small">Loading...</td></tr>';
+      let items = [];
+      if (db) {
+        try {
+          const snap = await getDocs(collection(db, 'departments'));
+          snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        const saved = localStorage.getItem('departments');
+        if (saved) items = JSON.parse(saved);
+      }
+
+      if (!items.length) {
+        // seed default departments
+        items = [
+          { id: 'clinic', name: 'Clinic', slots: 2 },
+          { id: 'it', name: 'IT', slots: 2 },
+          { id: 'scholar-office', name: 'Scholar Office', slots: 3 },
+          { id: 'guidance', name: 'Guidance', slots: 1 },
+          { id: 'library', name: 'Library', slots: 1 },
+          { id: 'rce', name: 'RCE', slots: 1 },
+          { id: 'osa', name: 'OSA', slots: 1 }
+        ];
+        await saveAll(items);
+      }
+
+      render(items);
+    }
+
+    function render(items) {
+      tbody.innerHTML = '';
+      items.forEach(it => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${escapeHtml(it.name)}</td><td>${escapeHtml(it.slots)}</td><td class="actions">
+          <button data-id="${it.id}" class="btn edit"><i class="fas fa-edit"></i></button>
+          <button data-id="${it.id}" class="btn delete" style="background:#dc3545"><i class="fas fa-trash"></i></button>
+        </td>`;
+        tbody.appendChild(tr);
+      });
+
+      // wire buttons
+      tbody.querySelectorAll('.edit').forEach(b => b.addEventListener('click', onEdit));
+      tbody.querySelectorAll('.delete').forEach(b => b.addEventListener('click', onDelete));
+    }
+
+    function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    async function saveAll(items) {
+      if (db) {
+        // write each with id as doc id
+        for (const it of items) {
+          const docRef = doc(db, 'departments', it.id);
+          try { await setDoc(docRef, { name: it.name, slots: Number(it.slots) }); } catch(e){ console.error(e); }
+        }
+      } else {
+        localStorage.setItem('departments', JSON.stringify(items));
+      }
+    }
+
+    async function onEdit(e) {
+      const id = e.currentTarget.getAttribute('data-id');
+      let items = [];
+      if (db) {
+        const snap = await getDocs(collection(db, 'departments'));
+        snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+      } else {
+        const saved = localStorage.getItem('departments'); if (saved) items = JSON.parse(saved);
+      }
+      const item = items.find(x => x.id === id) || items.find(x => slugify(x.name) === id);
+      if (!item) return;
+      // populate form
+      deptSelect.value = item.name;
+      slotsInput.value = item.slots;
+      addBtn.textContent = 'Update';
+      addBtn.dataset.editing = id;
+    }
+
+    async function onDelete(e) {
+      const id = e.currentTarget.getAttribute('data-id');
+      if (!confirm('Delete this department?')) return;
+      if (db) {
+        try { await deleteDoc(doc(db, 'departments', id)); } catch(e){ console.error(e); }
+      } else {
+        const saved = localStorage.getItem('departments');
+        let items = saved ? JSON.parse(saved) : [];
+        items = items.filter(x => x.id !== id);
+        localStorage.setItem('departments', JSON.stringify(items));
+      }
+      await loadDepartments();
+    }
+
+    function slugify(name){ return String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+
+    addBtn.addEventListener('click', async () => {
+      const name = (deptSelect.value || '').trim();
+      const slots = Number(slotsInput.value || 0);
+      if (!name) { message.innerHTML = '<span class="small" style="color:#c00">Please choose a department name</span>'; return; }
+      const id = slugify(name);
+      if (db) {
+        try {
+          await setDoc(doc(db, 'departments', id), { name, slots });
+          message.innerHTML = '<span class="small" style="color:green">Saved to Firestore</span>';
+        } catch (e) { console.error(e); message.innerHTML = '<span class="small" style="color:#c00">Failed to save to Firestore</span>'; }
+      } else {
+        const saved = localStorage.getItem('departments');
+        let items = saved ? JSON.parse(saved) : [];
+        // replace or add
+        const existing = items.find(x => x.id === id);
+        if (existing) { existing.name = name; existing.slots = slots; } else { items.push({ id, name, slots }); }
+        localStorage.setItem('departments', JSON.stringify(items));
+        message.innerHTML = '<span class="small" style="color:green">Saved locally</span>';
+      }
+      addBtn.textContent = 'Add / Update';
+      delete addBtn.dataset.editing;
+      setTimeout(() => message.innerHTML = '', 2500);
+      await loadDepartments();
+    });
+
+    // initial load
+    loadDepartments();
+  </script>
+</body>
+</html>
