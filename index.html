@@ -21,9 +21,7 @@
         /* Header & Navigation - tightened/professional spacing */
         .header {
             background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);
-            colo                    <div class="cta-buttons">
-                        <a href="pages/public/apply.html" class="apply-now-btn">Apply Now!</a>
-                        <a href="#renew" class="renew-now-btn">Renew Now!</a>white;
+            color: white;
             padding: 0;
             position: fixed;
             width: 100%;
@@ -49,9 +47,12 @@
         }
 
         .logo-img {
-            height: 45px;
-            width: 45px;
+            /* header logo — use provided transparent PNG, keep compact and crisp */
+            width: 48px;
+            height: 48px;
             object-fit: contain;
+            background: transparent;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.18)); /* subtle contrast on gradient */
         }
 
         .logo-text {
@@ -92,7 +93,7 @@
         .login-btn {
             background: #FFD700;
             color: #333;
-            padding: 0.6rem 1.5rem;
+            padding: 0.65rem 1.8rem;
             border-radius: 25px;
             text-decoration: none;
             font-weight: 700;
@@ -102,7 +103,7 @@
             justify-content: center;
             white-space: nowrap;
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            font-size: 0.95rem;
+            font-size: 1rem;
         }
         
         .login-btn:hover { 
@@ -111,11 +112,11 @@
             box-shadow: 0 6px 15px rgba(0,0,0,0.2);
         }
         
-        /* Hero - reduce oversized logo and tighten vertical spacing */
+        /* Hero - professional sizing and readability improvements */
         .hero {
             background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);
             color: white;
-            padding: 6rem 0 3rem; /* slightly less vertical padding for balance */
+            padding: 5rem 0 4rem;
             min-height: calc(100vh - 72px);
             display: flex;
             align-items: center;
@@ -143,7 +144,7 @@
             flex-direction: row;
             align-items: center;
             justify-content: space-between;
-            gap: 5rem;
+            gap: 4rem;
             padding: 0 3rem;
         }
         
@@ -152,73 +153,113 @@
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
-            min-width: 300px;
-            max-width: 500px;
+            flex: 1;
+            max-width: 600px;
         }
         
         .hero-content h1 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.9;
         }
         
         .hero-content h2 {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
             color: #FFD700;
-            line-height: 1.2;
+            line-height: 1.3;
+            font-weight: 700;
         }
-        
-        .hero-content p {
-            font-size: 1.15rem;
-            margin-bottom: 2.5rem;
-            line-height: 1.8;
+
+        .hero-content h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            line-height: 1.5;
+            font-weight: 600;
             opacity: 0.95;
         }
         
+        .hero-content p {
+            font-size: 1.05rem;
+            margin-bottom: 1.2rem;
+            line-height: 1.9;
+            opacity: 0.92;
+            max-width: 540px;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 8px 20px rgba(255, 215, 0, 0.6);
+            }
+            50% {
+                box-shadow: 0 8px 30px rgba(255, 215, 0, 0.9);
+            }
+            100% {
+                box-shadow: 0 8px 20px rgba(255, 215, 0, 0.6);
+            }
+        }
+
         .apply-btn {
-            background: #FFD700;
-            color: #333;
-            padding: 1.1rem 2.5rem;
-            border-radius: 30px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000;
+            padding: 1.3rem 3.5rem;
+            border-radius: 35px;
             text-decoration: none;
-            font-weight: bold;
-            font-size: 1.2rem;
+            font-weight: 900;
+            font-size: 1.35rem;
             display: inline-block;
             transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.7), 0 0 20px rgba(255, 215, 0, 0.5);
+            margin-top: 1.5rem;
+            border: 4px solid #FF8C00;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            animation: pulse 2s infinite;
+            position: relative;
+            z-index: 10;
         }
         
         .apply-btn:hover {
-            background: #FFC107;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+            background: linear-gradient(135deg, #FFC107 0%, #FF8C00 100%);
+            transform: translateY(-5px) scale(1.08);
+            box-shadow: 0 15px 35px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.6);
+            border-color: #FF6B00;
+            animation: none;
         }
-        
+
+        /* Hero logo - increased by ~30% */
         .hero-logo {
             display: flex;
             justify-content: center;
             align-items: center;
-            min-width: 300px;
-            max-width: 400px;
+            flex-shrink: 0;
+            max-width: 500px;
         }
-        
+
         .motortrade-logo {
-            width: 260px; /* smaller, professional scale */
-            height: 260px;
-            margin: 0 auto;
+            width: 100%;
+            max-width: 494px;
+            height: auto;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: transparent;
+            padding: 1rem;
         }
-        
-        .motortrade-logo svg {
+
+        .motortrade-logo img {
             width: 100%;
-            height: 100%;
+            height: auto;
+            max-height: 364px;
+            object-fit: contain;
+            filter: drop-shadow(0 8px 24px rgba(0,0,0,0.15));
         }
-        
-        /* About Section */
+
+        /* About Section - improved readability */
         .about {
             padding: 5rem 0;
             background: #f8f9fa;
@@ -236,15 +277,16 @@
         
         .about h2 {
             color: #4A90E2;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
         }
         
         .about-content {
             display: flex;
             flex-direction: row;
             gap: 3rem;
-            margin-top: 3rem;
+            margin-top: 2rem;
             text-align: left;
             align-items: flex-start;
             justify-content: center;
@@ -252,19 +294,20 @@
         }
         
         .about-text {
-            font-size: 1rem;
-            line-height: 1.8;
+            font-size: 1.05rem;
+            line-height: 2;
             color: #555;
             flex: 1;
             min-width: 250px;
-            max-width: 500px;
+            max-width: 550px;
         }
         
         .about-text p {
             margin-bottom: 1.5rem;
+            text-align: justify;
         }
         
-        /* Contact Section */
+        /* Contact Section - better hierarchy */
         .contact {
             background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);
             color: white;
@@ -284,14 +327,16 @@
         .contact h2 {
             color: #FFD700;
             font-size: 2rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
         }
         
         .contact p {
             font-size: 1.1rem;
             margin-bottom: 3rem;
+            opacity: 0.95;
         }
-        
+
         .contact-cards {
             display: flex;
             flex-direction: row;
@@ -300,7 +345,7 @@
             justify-content: center;
             width: 100%;
         }
-        
+
         .contact-card {
             display: flex;
             flex-direction: column;
@@ -339,12 +384,15 @@
         .contact-card h3 {
             margin-bottom: 1rem;
             color: #333;
+            font-size: 1.1rem;
+            font-weight: 700;
         }
         
         .contact-card p {
             margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            line-height: 1.6;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: #666;
         }
         
         .direct-link-btn {
@@ -363,7 +411,7 @@
             transform: translateY(-2px);
         }
         
-        /* What's New Section */
+        /* What's New Section - cleaner typography */
         .whats-new {
             padding: 5rem 0;
             background: white;
@@ -381,20 +429,12 @@
         
         .whats-new h2 {
             color: #4A90E2;
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
             text-align: center;
+            font-weight: 700;
         }
-        
-        .scholarship-info {
-            display: flex;
-            flex-direction: row;
-            gap: 3rem;
-            align-items: flex-start;
-            justify-content: center;
-            width: 100%;
-        }
-        
+
         .scholarship-content {
             display: flex;
             flex-direction: column;
@@ -405,6 +445,13 @@
             max-width: 600px;
         }
         
+        .scholarship-content h3 {
+            font-size: 1.5rem;
+            color: #4A90E2;
+            margin-bottom: 2rem;
+            font-weight: 700;
+        }
+        
         .requirements, .qualifications, .instructions {
             margin-bottom: 2rem;
         }
@@ -413,8 +460,9 @@
             color: #4A90E2;
             margin-bottom: 1rem;
             text-transform: uppercase;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
+            font-size: 0.85rem;
+            letter-spacing: 1.2px;
+            font-weight: 700;
         }
         
         .requirements ul, .qualifications ul, .instructions ul {
@@ -423,11 +471,12 @@
         }
         
         .requirements li, .qualifications li, .instructions li {
-            padding: 0.3rem 0;
+            padding: 0.4rem 0;
             position: relative;
-            padding-left: 1.5rem;
-            font-size: 0.9rem;
-            line-height: 1.5;
+            padding-left: 1.8rem;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: #555;
         }
         
         .requirements li:before, .qualifications li:before {
@@ -457,6 +506,8 @@
             color: #4A90E2;
             text-align: center;
             margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 700;
         }
         
         .action-buttons {
@@ -537,22 +588,13 @@
         
         /* Responsive */
         @media (max-width: 1024px) {
-            .hero-container,
-            .about-content,
-            .contact-cards,
-            .scholarship-info {
-                flex-direction: column;
-                align-items: center;
-                gap: 2rem;
-            }
-            .scholarship-content,
-            .scholarship-image,
-            .about-text,
-            .contact-card {
-                max-width: 100%;
-                min-width: 0;
-            }
+            .hero-container { gap: 3rem; }
+            .hero-content { max-width: 100%; }
+            .hero-logo { max-width: 420px; }
+            .motortrade-logo { max-width: 390px; }
+            .motortrade-logo img { max-height: 312px; }
         }
+
         @media (max-width: 768px) {
             .nav-container { padding: 0 1rem; overflow-x: auto; }
             .nav-links { gap: 0.6rem; }
@@ -571,30 +613,74 @@
                 width: 100%;
                 justify-content: center;
             }
-            .hero-container,
-            .about-content,
-            .contact-cards,
-            .scholarship-info {
-                flex-direction: column;
-                align-items: center;
-                gap: 2rem;
+            .hero {
+                padding: 4rem 0 3rem;
             }
+
+            .hero-container {
+                gap: 2.5rem;
+                padding: 0 2rem;
+            }
+
             .hero-content {
                 align-items: center;
-                width: 100%;
+                text-align: center;
             }
-            .scholarship-content,
-            .scholarship-image,
-            .about-text,
+
+            .hero-content h2 {
+                font-size: 2rem;
+            }
+
+            .hero-content h3 {
+                font-size: 1.1rem;
+            }
+
+            .hero-content p {
+                font-size: 1rem;
+                max-width: 100%;
+            }
+
+            .hero-logo {
+                max-width: 320px;
+                margin-top: 1.5rem;
+            }
+
+            .motortrade-logo {
+                max-width: 300px;
+            }
+
+            .motortrade-logo img {
+                max-height: 260px;
+            }
+
+            .about h2,
+            .whats-new h2 {
+                font-size: 1.8rem;
+            }
+
+            .about-text {
+                font-size: 1rem;
+                line-height: 1.8;
+            }
+
+            .scholarship-content h3 {
+                font-size: 1.3rem;
+            }
+
+            .apply-btn {
+                padding: 1.2rem 2.8rem;
+                font-size: 1.15rem;
+                width: 100%;
+                max-width: 320px;
+            }
+
+            .contact-cards {
+                flex-direction: column;
+                align-items: center;
+            }
+
             .contact-card {
                 max-width: 100%;
-                min-width: 0;
-            }
-            .action-buttons {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: stretch;
-                width: 100%;
             }
         }
     </style>
@@ -604,7 +690,13 @@
     <header class="header">
     <nav class="nav-container">
         <div class="logo-group">
-            <img src="assets/images/motortrade-logo.png" alt="Motortrade Logo" class="logo-img">
+            <!-- header logo -> use the PNG you provided; fallback to original file if missing -->
+            <img src="assets/images/motortrade-logo-new.png"
+                 alt="Motortrade Logo"
+                 class="logo-img"
+                 width="48" height="48"
+                 loading="lazy"
+                 onerror="this.onerror=null;this.src='assets/images/motortrade-logo.png'">
             <span class="logo-text">GRC-MLALAF Scholarship</span>
         </div>
         <ul class="nav-links">
@@ -612,33 +704,31 @@
             <li><a href="#about">About Us</a></li>
             <li><a href="#contact">Contact Us</a></li>
             <li><a href="#whats-new">What's New?</a></li>
-            <!-- removed on request: Validator, Set Semester, Team Management -->
         </ul>
-                <a href="pages/public/login.html" class="login-btn">Admin Login</a>
+        <a href="pages/public/login.html" class="login-btn">Login</a>
     </nav>
 </header>
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="hero-container">
             <div class="hero-content">
-                <h1>GOOD AFTERNOON!</h1>
-                <h2>Welcome to<br>GRC-MLALAF Scholarship</h2>
-                <p>It breaks barriers, opens doors, and reaches those once left behind. This is education without borders where learning adapts, empowers, and transforms lives.</p>
+                <h2>Welcome to<br>GRC-MLALAF<br>Scholarship</h2>
+                <h3>Breaking Barriers to Quality Education</h3>
+                <p>Since 2001, the Motortrade Life and Livelihood Assistance Foundation has been committed to improving the quality of life for underprivileged students. In partnership with Global Reciprocal Colleges, we provide 100% scholarship opportunities to deserving Filipino students.</p>
+
+                <p style="margin-bottom: 2rem;"><strong>Education without borders. Learning that adapts, empowers, and transforms lives.</strong></p>
+                
                 <div>
                     <a href="pages/public/apply.html" class="apply-btn">Apply Now!</a>
                 </div>
             </div>
+            <!-- logo displayed on the right side -->
             <div class="hero-logo">
                 <div class="motortrade-logo">
-                    <svg viewBox="0 0 400 400" style="transform: rotate(-15deg);">
-                        <circle cx="200" cy="200" r="180" fill="none" stroke="#FFD700" stroke-width="4"/>
-                        <text x="200" y="140" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#FFD700">Life & livelihood</text>
-                        <text x="200" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#FFD700">Motortrade</text>
-                        <text x="200" y="240" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#FFD700">assistance</text>
-                        <text x="200" y="270" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#FFD700">foundation</text>
-                        <path d="M 60 320 Q 200 280 340 320" stroke="#FFD700" stroke-width="2" fill="none"/>
-                        <path d="M 60 80 Q 200 120 340 80" stroke="#FFD700" stroke-width="2" fill="none"/>
-                    </svg>
+                    <img src="assets/images/logobg.png"
+                         alt="Motortrade Life and Livelihood Assistance Foundation Logo"
+                         loading="lazy"
+                         onerror="this.onerror=null;this.src='assets/images/motortrade-logo.png'">
                 </div>
             </div>
         </div>
