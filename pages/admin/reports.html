@@ -75,8 +75,8 @@
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getFirestore, collection, getDocs, query, where, orderBy, Timestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
-    // Use same config as admin pages (if you changed it elsewhere, update here too)
     const firebaseConfig = {
       apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
       authDomain: "scholarship-cloudbase.firebaseapp.com",
@@ -86,13 +86,41 @@
       appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
     };
 
-    let app, db;
+    let app, db, auth;
     try {
       app = initializeApp(firebaseConfig);
       db = getFirestore(app);
+      auth = getAuth(app);
       console.debug('Firestore initialized for reports');
     } catch (e) {
       console.warn('Firestore not initialized:', e);
+    }
+
+    // Authentication guard
+    if (auth) {
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          window.location.href = '../public/login.html';
+          return;
+        }
+        
+        if (db) {
+          try {
+            const userSnap = await getDocs(collection(db, 'users'));
+            const userData = userSnap.docs.find(d => d.data().uid === user.uid);
+            if (userData && userData.data().role !== 'admin') {
+              alert('Access denied. Admin privileges required.');
+              const role = userData.data().role;
+              if (role === 'scholar') window.location.href = './scholar-dashboard.html';
+              else if (role === 'validator') window.location.href = './validator-new.html';
+              else window.location.href = '../public/login.html';
+              return;
+            }
+          } catch (error) {
+            console.error('Auth error:', error);
+          }
+        }
+      });
     }
 
     const generateBtn = document.getElementById('generateBtn');

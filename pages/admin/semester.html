@@ -514,7 +514,157 @@
         </div>
     </div>
 
+    <!-- Add Firebase Scripts BEFORE the existing script tag -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
     <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            authDomain: "scholarship-cloudbase.firebaseapp.com",
+            projectId: "scholarship-cloudbase",
+            storageBucket: "scholarship-cloudbase.firebasestorage.app",
+            messagingSenderId: "316123000523",
+            appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
+            measurementId: "G-QW1PMQZMSZ"
+        };
+
+        // Initialize Firebase
+        let db, auth;
+        let isAuthenticated = false;
+        let userRole = null;
+
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            auth = firebase.auth();
+
+            db.enablePersistence().catch((err) => {
+                console.log('Persistence failed:', err.code);
+            });
+
+            console.log('🔥 Firebase initialized successfully');
+        } catch (error) {
+            console.error('❌ Firebase initialization failed:', error);
+            alert('System error. Redirecting to login...');
+            window.location.href = '../public/login.html';
+        }
+
+        // STRICT AUTHENTICATION CHECK - MUST BE FIRST
+        auth.onAuthStateChanged(async (user) => {
+            console.log('🔐 Auth state changed:', user ? user.email : 'No user');
+
+            if (!user) {
+                // NO USER - BLOCK ACCESS IMMEDIATELY
+                console.log('❌ No authenticated user - blocking access');
+                document.body.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);">
+                        <div style="background: white; padding: 3rem; border-radius: 20px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                            <i class="fas fa-lock" style="font-size: 4rem; color: #dc3545; margin-bottom: 1rem;"></i>
+                            <h2 style="color: #333; margin-bottom: 1rem;">Access Denied</h2>
+                            <p style="color: #666; margin-bottom: 2rem;">You must be logged in to access this page.</p>
+                            <p style="color: #999; font-size: 0.9rem;">Redirecting to login...</p>
+                        </div>
+                    </div>
+                `;
+                setTimeout(() => {
+                    window.location.href = '../public/login.html';
+                }, 2000);
+                return;
+            }
+
+            try {
+                console.log('👤 Checking user profile for:', user.email);
+                console.log('🆔 User UID:', user.uid);
+                
+                const userDoc = await db.collection('users').doc(user.uid).get();
+
+                if (!userDoc.exists) {
+                    console.error('❌ User document not found in Firestore');
+                    console.log('📧 Email:', user.email);
+                    console.log('🆔 UID:', user.uid);
+                    
+                    // Show detailed error with option to continue
+                    document.body.innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);">
+                            <div style="background: white; padding: 3rem; border-radius: 20px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 500px;">
+                                <i class="fas fa-exclamation-circle" style="font-size: 4rem; color: #ff9800; margin-bottom: 1rem;"></i>
+                                <h2 style="color: #333; margin-bottom: 1rem;">User Profile Not Found</h2>
+                                <p style="color: #666; margin-bottom: 1rem;">Your account (${user.email}) is authenticated but missing a profile in the database.</p>
+                                <p style="color: #999; font-size: 0.9rem; margin-bottom: 1.5rem;">Please contact the administrator to set up your account profile.</p>
+                                <div style="display: flex; gap: 1rem; justify-content: center;">
+                                    <button onclick="window.location.href='admin.html'" style="background: #4A90E2; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: bold;">Try Dashboard</button>
+                                    <button onclick="firebase.auth().signOut().then(() => window.location.href='../public/login.html')" style="background: #dc3545; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: bold;">Logout</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const userData = userDoc.data();
+                userRole = userData.role || '';
+                
+                console.log('✅ User profile found');
+                console.log('👔 Role:', userRole);
+
+                // CHECK IF USER IS ADMIN
+                if (userRole !== 'admin' && userRole !== 'administrator') {
+                    console.log('❌ User is not admin (role:', userRole, ') - blocking access');
+
+                    document.body.innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);">
+                            <div style="background: white; padding: 3rem; border-radius: 20px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 4rem; color: #ffc107; margin-bottom: 1rem;"></i>
+                                <h2 style="color: #333; margin-bottom: 1rem;">Access Denied</h2>
+                                <p style="color: #666; margin-bottom: 2rem;">Admin privileges required to access this page.</p>
+                                <p style="color: #999; font-size: 0.9rem;">Redirecting to your dashboard...</p>
+                            </div>
+                        </div>
+                    `;
+
+                    setTimeout(() => {
+                        if (userRole === 'validator' || userRole === 'reviewer') {
+                            window.location.href = 'validator-new.html';
+                        } else if (userRole === 'scholar') {
+                            window.location.href = 'scholar-dashboard.html';
+                        } else {
+                            window.location.href = '../public/login.html';
+                        }
+                    }, 2000);
+                    return;
+                }
+
+                console.log('✅ Admin authenticated successfully:', user.email);
+                isAuthenticated = true;
+
+                initializePage();
+
+            } catch (error) {
+                console.error('❌ Error verifying user:', error);
+                console.error('Error details:', error.message);
+                
+                document.body.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%);">
+                        <div style="background: white; padding: 3rem; border-radius: 20px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 500px;">
+                            <i class="fas fa-times-circle" style="font-size: 4rem; color: #dc3545; margin-bottom: 1rem;"></i>
+                            <h2 style="color: #333; margin-bottom: 1rem;">Authentication Error</h2>
+                            <p style="color: #666; margin-bottom: 1rem;">Error: ${error.message}</p>
+                            <button onclick="window.location.href='../public/login.html'" style="background: #4A90E2; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: bold;">Back to Login</button>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        // Initialize page ONLY after authentication
+        function initializePage() {
+            console.log('✅ Semester Management page initialized');
+            // Add any initialization code here
+        }
+
         // Navigation function
         function goBack() {
             // Check if there's a previous page in history

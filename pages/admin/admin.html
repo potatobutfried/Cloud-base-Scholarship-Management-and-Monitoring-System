@@ -457,7 +457,7 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, getDocs, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
         import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         
         // Firebase configuration
@@ -480,52 +480,87 @@
         window.db = db;
         window.auth = auth;
         
-        // Authentication check
-        onAuthStateChanged(auth, (user) => {
+        // Strict authentication check - NO DEMO MODE
+        onAuthStateChanged(auth, async (user) => {
             console.log('Auth state changed:', user);
             
             if (!user) {
-                // For development, skip auth check temporarily
-                console.log('No user authenticated - using demo mode');
-                
-                // Update admin name for demo
-                document.getElementById('adminName').textContent = 'Demo Admin';
-                
-                // Load dashboard statistics in demo mode
-                loadDashboardStats();
+                // NO USER - REDIRECT TO LOGIN IMMEDIATELY
+                console.log('No authenticated user - redirecting to login');
+                showNotification('Please login to access the admin dashboard', 'error');
+                setTimeout(() => {
+                    window.location.href = '../public/login.html';
+                }, 1000);
                 return;
+            }
+            
+            try {
+                // Verify user role from Firestore
+                const userDocRef = doc(db, 'users', user.uid);
+                const userSnapshot = await getDoc(userDocRef);
                 
-                // Uncomment the line below to enforce authentication
-                // window.location.href = 'login.html';
-            } else {
-                // Update admin name
-                document.getElementById('adminName').textContent = user.displayName || user.email;
+                if (!userSnapshot.exists()) {
+                    console.log('User document not found - redirecting to login');
+                    await signOut(auth);
+                    showNotification('Account not found. Please contact support.', 'error');
+                    setTimeout(() => {
+                        window.location.href = '../public/login.html';
+                    }, 1500);
+                    return;
+                }
+                
+                const userData = userSnapshot.data();
+                const userRole = userData.role || '';
+                
+                // Check if user is admin
+                if (userRole !== 'admin' && userRole !== 'administrator') {
+                    console.log('User is not admin - redirecting to appropriate dashboard');
+                    await signOut(auth);
+                    showNotification('Access denied. Admin privileges required.', 'error');
+                    
+                    // Redirect based on actual role
+                    setTimeout(() => {
+                        if (userRole === 'validator' || userRole === 'reviewer') {
+                            window.location.href = 'validator-new.html';
+                        } else if (userRole === 'scholar') {
+                            window.location.href = 'scholar-dashboard.html';
+                        } else {
+                            window.location.href = '../public/login.html';
+                        }
+                    }, 1500);
+                    return;
+                }
+                
+                // User is authenticated and is admin - proceed
+                console.log('Admin authenticated successfully');
+                document.getElementById('adminName').textContent = userData.fullName || userData.name || user.email;
                 
                 // Load dashboard statistics
                 loadDashboardStats();
+                
+            } catch (error) {
+                console.error('Error verifying user:', error);
+                showNotification('Authentication error. Please login again.', 'error');
+                setTimeout(() => {
+                    window.location.href = '../public/login.html';
+                }, 1500);
             }
         });
         
-        // Load dashboard statistics
+        // Load dashboard statistics - ONLY if authenticated
         async function loadDashboardStats() {
             try {
                 showLoading(true);
                 console.log('Loading dashboard statistics...');
                 
-                // Set demo data first
                 let totalStudents = 0;
                 let activeScholars = 0;
                 let pendingApplications = 0;
                 let totalDepartments = 0;
                 
                 try {
-                    // Try to get real data from Firebase
-                    console.log('Attempting to fetch from Firebase...');
-                    
                     // Get total students
                     const studentsSnapshot = await getDocs(collection(db, 'users'));
-                    console.log('Students snapshot:', studentsSnapshot.size);
-                    
                     const students = studentsSnapshot.docs.filter(doc => {
                         const data = doc.data();
                         return data && data.role === 'student';
@@ -533,11 +568,11 @@
                     totalStudents = students.length;
                     
                     // Get active scholars
-                    const activeScholars = students.filter(doc => {
+                    const activeScholarsList = students.filter(doc => {
                         const data = doc.data();
                         return data && data.scholarshipStatus === 'active';
                     });
-                    activeScholars = activeScholars.length;
+                    activeScholars = activeScholarsList.length;
                     
                     // Get pending applications
                     const applicationsSnapshot = await getDocs(collection(db, 'applications'));
@@ -552,13 +587,8 @@
                     totalDepartments = departmentsSnapshot.size;
                     
                 } catch (firebaseError) {
-                    console.log('Firebase error, using demo data:', firebaseError);
-                    
-                    // Use demo data if Firebase fails
-                    totalStudents = 156;
-                    activeScholars = 89;
-                    pendingApplications = 23;
-                    totalDepartments = 8;
+                    console.error('Error fetching Firebase data:', firebaseError);
+                    showNotification('Error loading statistics', 'warning');
                 }
                 
                 // Update the display with animation
@@ -571,14 +601,7 @@
                 
             } catch (error) {
                 console.error('Error loading dashboard stats:', error);
-                
-                // Fallback to demo data
-                animateCountUp('totalStudents', 156);
-                animateCountUp('activeScholars', 89);
-                animateCountUp('pendingApplications', 23);
-                animateCountUp('totalDepartments', 8);
-                
-                showNotification('Using demo data - Firebase connection unavailable', 'warning');
+                showNotification('Error loading dashboard statistics', 'error');
             } finally {
                 showLoading(false);
             }
@@ -708,16 +731,43 @@
         async function logout() {
             try {
                 showLoading(true);
+                showNotification('Logging out...');
                 await window.auth.signOut();
+                sessionStorage.clear();
+                localStorage.clear();
                 showNotification('Logged out successfully');
-                window.location.href = '../public/login.html';
+                setTimeout(() => {
+                    window.location.href = '../public/login.html';
+                }, 500);
             } catch (error) {
                 console.error('Error logging out:', error);
                 showNotification('Error logging out', 'error');
+                // Force redirect even on error
+                setTimeout(() => {
+                    window.location.href = '../public/login.html';
+                }, 1500);
             } finally {
                 showLoading(false);
             }
         }
+        
+        // Prevent unauthorized access via browser back button
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                // Page was loaded from cache (back button)
+                window.location.reload();
+            }
+        });
+        
+        // Check authentication on page visibility change
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden && window.auth) {
+                const user = window.auth.currentUser;
+                if (!user) {
+                    window.location.href = '../public/login.html';
+                }
+            }
+        });
         
         // Initialize dashboard
         document.addEventListener('DOMContentLoaded', function() {

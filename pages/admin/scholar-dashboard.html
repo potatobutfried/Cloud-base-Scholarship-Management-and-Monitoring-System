@@ -19,6 +19,79 @@
       padding: 20px;
       color: #333;
     }
+
+    /* Access Denied Overlay */
+    .access-denied-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    }
+
+    .access-denied-card {
+      background: white;
+      border-radius: 16px;
+      padding: 3rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      text-align: center;
+      max-width: 500px;
+      margin: 2rem;
+    }
+
+    .access-denied-icon {
+      width: 80px;
+      height: 80px;
+      background: #ffebee;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      color: #c62828;
+      font-size: 2.5rem;
+    }
+
+    .access-denied-card h2 {
+      color: #333;
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .access-denied-card p {
+      color: #666;
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .redirect-timer {
+      color: #999;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .login-btn {
+      background: linear-gradient(135deg, #4A90E2 0%, #357abd 100%);
+      color: white;
+      padding: 0.8rem 2rem;
+      border-radius: 25px;
+      text-decoration: none;
+      display: inline-block;
+      font-weight: 600;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(74,144,226,0.3);
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(74,144,226,0.4);
+    }
     
     .container {
       max-width: 1100px;
@@ -371,10 +444,25 @@
     </div>
   </div>
 
+  <!-- Access Denied Overlay -->
+  <div class="access-denied-overlay" id="accessDeniedOverlay">
+    <div class="access-denied-card">
+      <div class="access-denied-icon">
+        <i class="fas fa-lock"></i>
+      </div>
+      <h2>Access Denied</h2>
+      <p>You must be logged in to access this page.</p>
+      <p class="redirect-timer">Redirecting to login in <span id="redirectCountdown">3</span> seconds...</p>
+      <a href="../public/login.html" class="login-btn">
+        <i class="fas fa-sign-in-alt"></i> Go to Login
+      </a>
+    </div>
+  </div>
+
   <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
   import { getFirestore, collection, getDocs, query, where, orderBy, limit, getDoc, doc, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-  import { getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+  import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
     const firebaseConfig = {
       apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
@@ -387,6 +475,24 @@
 
   let db, auth, currentUser;
   try { const app = initializeApp(firebaseConfig); db = getFirestore(app); auth = getAuth(app); console.debug('Firebase ready'); } catch(e){ console.warn('Firebase init failed', e); db=null }
+
+    // Show access denied and redirect
+    function showAccessDenied() {
+      const overlay = document.getElementById('accessDeniedOverlay');
+      const countdown = document.getElementById('redirectCountdown');
+      overlay.style.display = 'flex';
+      
+      let seconds = 3;
+      const timer = setInterval(() => {
+        seconds--;
+        countdown.textContent = seconds;
+        if (seconds <= 0) {
+          clearInterval(timer);
+          sessionStorage.clear();
+          window.location.href = '../public/login.html';
+        }
+      }, 1000);
+    }
 
     const profileName = document.getElementById('profileName');
     const profileEmail = document.getElementById('profileEmail');
@@ -412,14 +518,26 @@
             }
           }
           if (!profile) profile = { id: user.uid, fullName: user.displayName || user.email, email: user.email, status: 'scholar' };
+          
+          // Check if user has scholar role
+          if (profile.role && profile.role !== 'scholar') {
+            console.warn('Access denied: User is not a scholar');
+            alert('Access denied. You do not have permission to access this page.');
+            sessionStorage.clear();
+            window.location.href = profile.role === 'validator' ? './validator-new.html' : './admin-dashboard.html';
+            return;
+          }
         } else {
-          // no auth available or no user signed in - use demo account for now
-          profile = { id: 'demo', fullName: 'Demo Scholar', email: 'demo@example.com', status: 'scholar' };
+          // no auth - show access denied
+          console.warn('No authenticated user');
+          showAccessDenied();
+          return;
         }
-      } catch(e){ console.warn('profile load failed', e); if (!profile) profile = { id: 'demo', fullName: 'Demo Scholar', email: 'demo@example.com', status: 'scholar' }; }
-
-      // if role exists but is not scholar, just warn but don't redirect during this temporary mode
-      if (profile.role && profile.role !== 'scholar') console.warn('Non-scholar role detected:', profile.role);
+      } catch(e){ 
+        console.warn('profile load failed', e); 
+        showAccessDenied();
+        return;
+      }
 
       profileName.textContent = profile.fullName || profile.name || 'Scholar';
       profileEmail.textContent = profile.email || '';
@@ -427,16 +545,30 @@
       profileDept.textContent = deptName || 'Unassigned';
 
       await loadUserRecords(profile.id || (currentUser && currentUser.uid) || 'demo');
-      // keep the header stats updated
       await loadStats();
     }
 
-    init();
+    // Authentication guard - check on page load
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        console.log('No user signed in, showing access denied...');
+        sessionStorage.clear();
+        showAccessDenied();
+      } else {
+        sessionStorage.setItem('authenticated', 'true');
+        init();
+      }
+    });
 
     logoutLink.addEventListener('click', async (e)=>{
       e.preventDefault();
       if (!auth) { window.location.href = '../public/login.html'; return; }
-      try { await signOut(auth); window.location.href = '../public/login.html'; } catch(e){ console.error('logout failed', e); }
+      try { 
+        sessionStorage.clear();
+        localStorage.clear();
+        await signOut(auth); 
+        window.location.href = '../public/login.html'; 
+      } catch(e){ console.error('logout failed', e); }
     });
 
     function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -550,23 +682,42 @@
       if (text.length > 500) { msgStatus.textContent='Message too long (max 500 chars)'; msgStatus.style.color='crimson'; return; }
 
       const payload = { message: text, createdAt: serverTimestamp(), userId: (currentUser && currentUser.uid) || 'demo' };
-      if (selectedImageBase64) payload.image = selectedImageBase64;
-
-      try {
-        if (db) {
-          await addDoc(collection(db,'scholar_messages'), payload);
-          msgStatus.style.color='green'; msgStatus.textContent='Message sent';
-          msgText.value = ''; msgImage.value=''; imgPreview.style.display='none'; selectedImageBase64=null;
-        } else {
-          // fallback: store to localStorage queue
-          const q = JSON.parse(localStorage.getItem('scholar_messages')||'[]'); q.push({ ...payload, createdAt: new Date().toISOString() }); localStorage.setItem('scholar_messages', JSON.stringify(q));
-          msgStatus.style.color='green'; msgStatus.textContent='Message saved locally (no DB)';
+      if (selectedImageBase64) {
+        // image upload - convert base64 to blob and upload to Firestore Storage
+        msgStatus.textContent = 'Uploading image...';
+        try {
+          const response = await fetch(selectedImageBase64);
+          const blob = await response.blob();
+          const reader = new FileReader();
+          reader.onloadend = async () => {
+            const base64data = reader.result;
+            // save message with image
+            await addDoc(collection(db, 'messages'), { ...payload, image: base64data });
+            msgStatus.textContent = 'Message sent';
+            msgText.value = '';
+            msgImage.value = '';
+            imgPreview.style.display = 'none';
+            selectedImageBase64 = null;
+            await loadUserRecords(currentUser.uid);
+          };
+          reader.readAsDataURL(blob);
+        } catch(e) {
+          console.error('Image upload failed', e);
+          msgStatus.textContent = 'Image upload failed';
         }
-      } catch(err){ console.error(err); msgStatus.style.color='crimson'; msgStatus.textContent='Failed to send message'; }
+      } else {
+        // text only message
+        try {
+          await addDoc(collection(db, 'messages'), payload);
+          msgStatus.textContent = 'Message sent';
+          msgText.value = '';
+          await loadUserRecords(currentUser.uid);
+        } catch(e) {
+          console.error('Message send failed', e);
+          msgStatus.textContent = 'Message send failed';
+        }
+      }
     });
-
-  // no search or list on scholar-only view; just load stats
-  loadStats();
   </script>
 </body>
 </html>

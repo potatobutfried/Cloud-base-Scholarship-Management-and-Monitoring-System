@@ -291,6 +291,82 @@
             margin-bottom: 15px;
         }
         
+        /* Access Denied Overlay */
+        .access-denied-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .access-denied-overlay.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        
+        .access-denied-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .access-denied-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 3rem;
+            color: white;
+        }
+        
+        .access-denied-title {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        .access-denied-message {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        
+        .access-denied-redirect {
+            color: #999;
+            font-size: 0.9rem;
+        }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
             .dashboard-grid {
@@ -318,6 +394,18 @@
     </style>
 </head>
 <body>
+    <!-- Access Denied Overlay -->
+    <div class="access-denied-overlay" id="accessDeniedOverlay">
+        <div class="access-denied-card">
+            <div class="access-denied-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h1 class="access-denied-title">Access Denied</h1>
+            <p class="access-denied-message">You must be logged in to access this page.</p>
+            <p class="access-denied-redirect">Redirecting to login...</p>
+        </div>
+    </div>
+
     <div class="container">
         <!-- Header -->
         <div class="header">
@@ -428,11 +516,12 @@
     <!-- Firebase Scripts -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     
     <script>
         // Firebase Configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyA-uL09djFAxT0CG9cETSf-UiZNAqGm-4Q",
+            apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
             authDomain: "scholarship-cloudbase.firebaseapp.com",
             projectId: "scholarship-cloudbase",
             storageBucket: "scholarship-cloudbase.firebasestorage.app",
@@ -446,6 +535,105 @@
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        // Show access denied screen
+        function showAccessDenied(message = 'You must be logged in to access this page.') {
+            const overlay = document.getElementById('accessDeniedOverlay');
+            overlay.querySelector('.access-denied-message').textContent = message;
+            setTimeout(() => {
+                overlay.classList.add('show');
+            }, 10);
+        }
+        
+        // Authentication guard
+        let authCheckComplete = false;
+        
+        auth.onAuthStateChanged(async (user) => {
+            console.log('🔐 Auth state changed:', user ? 'User logged in' : 'No user');
+            
+            if (!user) {
+                console.log('❌ No authenticated user found');
+                showAccessDenied();
+                setTimeout(() => {
+                    window.location.href = '../public/login.html';
+                }, 2000);
+                return;
+            }
+            
+            // Verify admin role
+            try {
+                console.log('🔍 Verifying user role for UID:', user.uid);
+                console.log('📧 User email:', user.email);
+                
+                // Try to get user document by UID field
+                let userSnapshot = await db.collection('users').where('uid', '==', user.uid).get();
+                
+                console.log('📊 Query by UID - Empty?:', userSnapshot.empty, 'Size:', userSnapshot.size);
+                
+                // If not found by uid field, try by document ID
+                if (userSnapshot.empty) {
+                    console.log('🔄 Trying to fetch by document ID...');
+                    try {
+                        const userDocById = await db.collection('users').doc(user.uid).get();
+                        if (userDocById.exists) {
+                            console.log('✅ Found user document by ID');
+                            userSnapshot = { empty: false, docs: [userDocById] };
+                        }
+                    } catch (docError) {
+                        console.log('⚠️ Error fetching by doc ID:', docError);
+                    }
+                }
+                
+                // If still not found, try by email
+                if (userSnapshot.empty) {
+                    console.log('🔄 Trying to fetch by email...');
+                    userSnapshot = await db.collection('users').where('email', '==', user.email).get();
+                    console.log('📊 Query by email - Empty?:', userSnapshot.empty, 'Size:', userSnapshot.size);
+                }
+                
+                if (userSnapshot.empty) {
+                    console.log('⚠️ No user document found in Firestore');
+                    showAccessDenied('User profile not found in database.');
+                    setTimeout(() => {
+                        window.location.href = '../public/login.html';
+                    }, 2000);
+                    return;
+                }
+                
+                const userData = userSnapshot.docs[0].data();
+                console.log('👤 User data retrieved:', userData);
+                console.log('👤 User role:', userData.role);
+                
+                if (userData.role !== 'admin') {
+                    console.log('🚫 Access denied - User role:', userData.role);
+                    showAccessDenied('Access denied. Admin privileges required.');
+                    setTimeout(() => {
+                        if (userData.role === 'scholar') {
+                            window.location.href = '../scholar/scholar-dashboard.html';
+                        } else if (userData.role === 'validator') {
+                            window.location.href = '../validator/validator-new.html';
+                        } else {
+                            window.location.href = '../public/login.html';
+                        }
+                    }, 2000);
+                    return;
+                }
+                
+                // User is authenticated and is admin - page is accessible
+                console.log('✅ Admin access granted');
+                authCheckComplete = true;
+                
+            } catch (error) {
+                console.error('❌ Auth verification error:', error);
+                console.error('Error details:', error.message);
+                showAccessDenied('Authentication error: ' + error.message);
+                setTimeout(() => {
+                    window.location.href = '../public/login.html';
+                }, 2000);
+                return;
+            }
+        });
         
         // Global variables
         let currentSemesterData = null;

@@ -303,6 +303,66 @@
             transform: translateY(-2px);
         }
         
+        /* Access Denied Overlay */
+        .access-denied-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .access-denied-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .access-denied-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 3rem;
+            color: white;
+        }
+        
+        .access-denied-title {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        .access-denied-message {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        
+        .access-denied-redirect {
+            color: #999;
+            font-size: 0.9rem;
+        }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
             .nav-container {
@@ -528,7 +588,72 @@
         </div>
     </main>
 
+    <!-- Access Denied Overlay -->
+    <div class="access-denied-overlay" id="accessDeniedOverlay">
+        <div class="access-denied-card">
+            <div class="access-denied-icon"><i class="fas fa-lock"></i></div>
+            <h1 class="access-denied-title">Access Denied</h1>
+            <p class="access-denied-message">You must be logged in to access this page.</p>
+            <p class="access-denied-redirect">Redirecting to login...</p>
+        </div>
+    </div>
+
     <script>
+        function showAccessDenied(message = 'You must be logged in to access this page.') {
+            const overlay = document.getElementById('accessDeniedOverlay');
+            overlay.querySelector('.access-denied-message').textContent = message;
+            overlay.style.display = 'flex';
+        }
+
+        // Firebase Authentication Check
+        (function() {
+            const script = document.createElement('script');
+            script.type = 'module';
+            script.textContent = `
+                import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+                import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+                import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+                
+                const firebaseConfig = {
+                    apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
+                    authDomain: "scholarship-cloudbase.firebaseapp.com",
+                    projectId: "scholarship-cloudbase",
+                    storageBucket: "scholarship-cloudbase.firebasestorage.app",
+                    messagingSenderId: "316123000523",
+                    appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e"
+                };
+                
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                const db = getFirestore(app);
+                
+                onAuthStateChanged(auth, async (user) => {
+                    if (!user) {
+                        window.showAccessDenied();
+                        setTimeout(() => { window.location.href = '../public/login.html'; }, 2000);
+                        return;
+                    }
+                    
+                    try {
+                        const userSnap = await getDocs(collection(db, 'users'));
+                        const userData = userSnap.docs.find(d => d.data().uid === user.uid);
+                        if (userData && userData.data().role !== 'admin') {
+                            window.showAccessDenied('Access denied. Admin privileges required.');
+                            const role = userData.data().role;
+                            setTimeout(() => {
+                                if (role === 'scholar') window.location.href = './scholar-dashboard.html';
+                                else if (role === 'validator') window.location.href = './validator-new.html';
+                                else window.location.href = '../public/login.html';
+                            }, 2000);
+                        }
+                    } catch (error) {
+                        console.error('Auth error:', error);
+                    }
+                });
+            `;
+            document.head.appendChild(script);
+        })();
+
         // Navigation function
         function goBack() {
             // Check if there's a previous page in history

@@ -29,9 +29,77 @@
     .actions .btn{margin-right:6px}
     .small{font-size:.92rem;color:#445}
     @media (max-width:768px){.row{flex-direction:column}.back{position:static;transform:none;margin-top:12px}}
+
+    .access-denied-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    
+    .access-denied-card {
+      background: white;
+      border-radius: 20px;
+      padding: 3rem;
+      text-align: center;
+      max-width: 500px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideIn 0.5s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .access-denied-icon {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 2rem;
+      font-size: 3rem;
+      color: white;
+    }
+    
+    .access-denied-title {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+    
+    .access-denied-message {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 1.5rem;
+    }
+    
+    .access-denied-redirect {
+      color: #999;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
+  <div class="access-denied-overlay" id="accessDeniedOverlay">
+    <div class="access-denied-card">
+      <div class="access-denied-icon"><i class="fas fa-lock"></i></div>
+      <h1 class="access-denied-title">Access Denied</h1>
+      <p class="access-denied-message">You must be logged in to access this page.</p>
+      <p class="access-denied-redirect">Redirecting to login...</p>
+    </div>
+  </div>
+
   <div class="container">
     <div class="header">
       <h1><i class="fas fa-building"></i> Departments & Slots</h1>
@@ -79,6 +147,7 @@
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getFirestore, collection, addDoc, setDoc, doc, getDocs, deleteDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
     const firebaseConfig = {
       apiKey: "AIzaSyA-uLO9djFAxT0CG9cETSf-UiZNAqGm-4Q",
@@ -89,14 +158,51 @@
       appId: "1:316123000523:web:45dbf9c1eb25a5ede4b54e",
     };
 
-    let db;
+    let db, auth;
     try {
       const app = initializeApp(firebaseConfig);
       db = getFirestore(app);
+      auth = getAuth(app);
       console.debug('Firestore available for departments');
     } catch (e) {
       console.warn('Firestore not available, using localStorage fallback', e);
       db = null;
+    }
+
+    function showAccessDenied(message = 'You must be logged in to access this page.') {
+      const overlay = document.getElementById('accessDeniedOverlay');
+      overlay.querySelector('.access-denied-message').textContent = message;
+      overlay.style.display = 'flex';
+    }
+
+    // Authentication guard
+    if (auth) {
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          showAccessDenied();
+          setTimeout(() => { window.location.href = '../public/login.html'; }, 2000);
+          return;
+        }
+        
+        if (db) {
+          try {
+            const userSnap = await getDocs(collection(db, 'users'));
+            const userData = userSnap.docs.find(d => d.data().uid === user.uid || d.data().email === user.email);
+            if (userData && userData.data().role !== 'admin') {
+              showAccessDenied('Access denied. Admin privileges required.');
+              const role = userData.data().role;
+              setTimeout(() => {
+                if (role === 'scholar') window.location.href = './scholar-dashboard.html';
+                else if (role === 'validator') window.location.href = './validator-new.html';
+                else window.location.href = '../public/login.html';
+              }, 2000);
+              return;
+            }
+          } catch (error) {
+            console.error('Auth check error:', error);
+          }
+        }
+      });
     }
 
     const deptSelect = document.getElementById('deptName');
